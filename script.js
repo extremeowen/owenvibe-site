@@ -80,7 +80,7 @@ const CONFIG = {
      4) Просто пошта — впиши email вище; кнопка відкриє поштовий клієнт.
      Якщо все порожнє — текст копіюється в буфер. */
   contact: {
-    functionUrl: "/.netlify/functions/telegram", // працює після деплою через Git; поки що є фолбек на Netlify Forms
+    functionUrl: "", // вмикається лише якщо деплоїш через Git із функцією в netlify/functions
     netlify: true,
     formEndpoint: ""
   },
@@ -1426,4 +1426,5 @@ initEasterEgg();
 initAnalytics();
 initServiceWorker();
 applyLanguage(lang);
+
 
