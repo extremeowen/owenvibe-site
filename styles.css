@@ -1424,3 +1424,12 @@ body.is-scrolled .site-header { border-bottom-color: var(--line); }
   .to-top { bottom: calc(78px + env(safe-area-inset-bottom)); }
   .site-header { padding-bottom: 10px; }
 }
+
+/* ---- прибираємо бейдж/дровер Netlify, якщо він інжектиться на сторінку ---- */
+#netlify-badge,
+.netlify-badge,
+[data-netlify-badge],
+iframe[src*="netlify.com"],
+iframe[src*="netlify.app"] {
+  display: none !important;
+}

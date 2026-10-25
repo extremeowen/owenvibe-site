@@ -1333,6 +1333,38 @@ function initAnalytics() {
   }
 }
 
+/* ---------------------------------- 12.4 бейдж Netlify --------- */
+/* Netlify інколи підсовує плашку «Powered by Netlify» (drawer для власника
+   сайту або бейдж drag&drop-деплою). Ховаємо її, якщо вона з'явилась у DOM. */
+function initNetlifyBadgeCleaner() {
+  const selectors = [
+    "#netlify-badge",
+    ".netlify-badge",
+    "[data-netlify-badge]",
+    'iframe[src*="netlify.com"]',
+    'iframe[src*="netlify.app"]',
+  ];
+
+  const hide = () => {
+    document.querySelectorAll(selectors.join(",")).forEach((el) => {
+      el.style.setProperty("display", "none", "important");
+    });
+
+    document.querySelectorAll("a, div, iframe, button").forEach((el) => {
+      const text = (el.textContent || "").trim().toLowerCase();
+      if (text === "powered by netlify" || text === "deploy with netlify") {
+        el.style.setProperty("display", "none", "important");
+      }
+    });
+  };
+
+  hide();
+
+  // Netlify може додати бейдж пізніше — стежимо за DOM
+  const observer = new MutationObserver(hide);
+  observer.observe(document.body, { childList: true, subtree: true });
+}
+
 /* ---------------------------------- 12.5 поділитися сайтом ----- */
 function initShare() {
   const button = $("#shareBtn");
@@ -1424,7 +1456,9 @@ initBackToTop();
 initCursorGlow();
 initEasterEgg();
 initAnalytics();
+initNetlifyBadgeCleaner();
 initServiceWorker();
 applyLanguage(lang);
+
 
 
