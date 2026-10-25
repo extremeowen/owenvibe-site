@@ -1,0 +1,5 @@
+# extremeowen — дозволяємо індексацію
+User-agent: *
+Allow: /
+
+Sitemap: https://owenvibe.netlify.app/sitemap.xml

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="uk" data-theme="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<title>404 — сторінку з'їв вайб</title>
+<meta name="robots" content="noindex" />
+<meta name="theme-color" content="#f5f5f7" id="themeColor" />
+<link rel="icon" href="favicon.ico" sizes="any" />
+<link rel="icon" type="image/png" href="favicon-32.png" sizes="32x32" />
+<link rel="stylesheet" href="styles.css" />
+<script>
+  (function () {
+    try {
+      var saved = localStorage.getItem("theme");
+      var system = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.dataset.theme = (saved === "dark" || saved === "light") ? saved : system;
+    } catch (e) {}
+  })();
+</script>
+</head>
+<body class="notfound-body">
+  <canvas id="bg" aria-hidden="true"></canvas>
+
+  <main class="notfound">
+    <p class="notfound-code">404</p>
+    <h1>Сторінку з'їв вайб</h1>
+    <p class="notfound-text">
+      Такої адреси немає — або її перейменували, або я ще не задеплоїв те, що ти шукаєш.
+      <span class="notfound-en" lang="en">This page does not exist. Try the home one.</span>
+    </p>
+    <div class="notfound-actions">
+      <a class="cta" href="index.html">На головну →</a>
+      <a class="cta cta-quiet" href="index.html#projects">Проєкти</a>
+    </div>
+  </main>
+
+  <script>
+    document.getElementById("year404")?.remove();
+    (function () {
+      var canvas = document.getElementById("bg");
+      if (!canvas) return;
+      var ctx = canvas.getContext("2d");
+      if (!ctx) return;
+      var dpr = Math.min(window.devicePixelRatio || 1, 2);
+      var w = window.innerWidth;
+      var h = window.innerHeight;
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      canvas.style.width = w + "px";
+      canvas.style.height = h + "px";
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      var dark = function () {
+        return document.documentElement.dataset.theme === "dark";
+      };
+      var dots = Array.from({ length: 60 }, function () {
+        return {
+          x: Math.random() * w,
+          y: Math.random() * h,
+          r: Math.random() * 1.2 + 0.4,
+          v: (Math.random() - 0.5) * 0.18,
+          a: Math.random() * 0.35 + 0.2
+        };
+      });
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        ctx.fillStyle = dark() ? "rgba(255,255,255,.25)" : "rgba(0,0,0,.18)";
+        dots.forEach(function (d) {
+          ctx.beginPath();
+          ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        return;
+      }
+      (function frame() {
+        ctx.clearRect(0, 0, w, h);
+        ctx.fillStyle = dark() ? "rgba(255,255,255,.28)" : "rgba(0,0,0,.2)";
+        dots.forEach(function (d) {
+          d.y += d.v;
+          if (d.y < -10) d.y = h + 10;
+          if (d.y > h + 10) d.y = -10;
+          ctx.beginPath();
+          ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        requestAnimationFrame(frame);
+      })();
+    })();
+  </script>
+</body>
+</html>

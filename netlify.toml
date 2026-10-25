@@ -1,0 +1,23 @@
+# Конфігурація Netlify для сайту extremeowen
+# publish = "." — сайт лежить прямо в корені репозиторію
+# functions = "netlify/functions" — серверні функції (пересилання в Telegram)
+
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+# Node 20 для функцій
+[functions]
+  node_version = "20"
+
+# Кеш статики не заважає, але свіжі версії html/css/js завжди перевіряються
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"

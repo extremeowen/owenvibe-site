@@ -1,0 +1,11 @@
+# локальні службові теки Netlify
+.netlify/
+node_modules/
+
+# оригінал фото (3.4 МБ) — не потрібен у репозиторії
+avatar-original.jpg
+
+# системні файли
+.DS_Store
+Thumbs.db
+desktop.ini
