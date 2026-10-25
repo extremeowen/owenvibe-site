@@ -1,4 +1,4 @@
-/* ============================================================
+﻿/* ============================================================
    extremeowen — логіка сторінки
    1. CONFIG (що змінювати)   2. Тексти UA/EN   3. Тема
    4. Мова   5. Посилання і копіювання   6. Аватар   7. Анімації
@@ -149,6 +149,14 @@ const I18N = {
     cvEduTitle: "Коледж · розробка програмного забезпечення",
     cvEduText: "Веб-технології, бази даних, ООП, C#/.NET, Flutter. Курсові та лабораторні — на GitHub.",
     cvSkills: "технології",
+    gameLink: "міні-гра",
+    gameHint: "Рухай мишкою або пальцем. Лови світлі крапки, уникай червоних.",
+    gameStart: "Почати",
+    gameRestart: "Ще раз",
+    gameScore: "Очки",
+    gameBest: "Рекорд",
+    gameOver: "Гру закінчено",
+    gameIdle: "Готовий?",
     cvPrint: "Завантажити PDF",
     notesTitle: "нотатки",
     contactTitle: "контакти",
@@ -173,6 +181,7 @@ const I18N = {
     paletteEmpty: "Нічого не знайшлось",
     paletteTab: "вкладка",
     paletteProject: "проєкт",
+    paletteGame: "гра",
     paletteLink: "посилання",
     writeTelegram: "Написати в Telegram",
     demoLabel: "демо",
@@ -223,6 +232,14 @@ const I18N = {
     cvEduTitle: "College · software engineering",
     cvEduText: "Web technologies, databases, OOP, C#/.NET, Flutter. Coursework and labs are on GitHub.",
     cvSkills: "technologies",
+    gameLink: "mini game",
+    gameHint: "Move with mouse or finger. Catch light dots, avoid the red ones.",
+    gameStart: "Start",
+    gameRestart: "Again",
+    gameScore: "Score",
+    gameBest: "Best",
+    gameOver: "Game over",
+    gameIdle: "Ready?",
     cvPrint: "Download PDF",
     notesTitle: "notes",
     contactTitle: "contact",
@@ -247,6 +264,7 @@ const I18N = {
     paletteEmpty: "Nothing found",
     paletteTab: "tab",
     paletteProject: "project",
+    paletteGame: "game",
     paletteLink: "link",
     writeTelegram: "Message me on Telegram",
     demoLabel: "demo",
@@ -957,6 +975,15 @@ function paletteItems() {
     });
   }
 
+  items.push({
+    label: t("gameLink"),
+    kicker: t("paletteGame"),
+    action: () => {
+      const link = $("#gameLink");
+      if (link) link.click();
+    },
+  });
+
   return items;
 }
 
@@ -1211,6 +1238,7 @@ function initContact() {
 
         form.reset();
         showToast(t("formSent"));
+        celebrate();
       } catch (error) {
         showToast(t("formError"));
       } finally {
@@ -1495,6 +1523,286 @@ function initServiceWorker() {
   });
 }
 
+/* ---------------------------------- 12.8 міні-гра -------------- */
+function initGame() {
+  const root = $("#game");
+  const canvas = $("#gameCanvas");
+  const link = $("#gameLink");
+  const startBtn = $("#gameStart");
+  if (!root || !canvas || !link || !startBtn) return;
+
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+
+  const W = 720;
+  const H = 480;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  ctx.scale(dpr, dpr);
+
+  const STORE = "vibeCatcherBest";
+
+  let state = "idle"; // idle | run | over
+  let score = 0;
+  let lives = 3;
+  let items = [];
+  let speed = 150;
+  let spawnAcc = 0;
+  let playerX = W / 2;
+  let targetX = W / 2;
+  let last = 0;
+  let raf = 0;
+
+  let best = 0;
+  try {
+    best = Number(localStorage.getItem(STORE) || 0) || 0;
+  } catch (e) {}
+
+  const palette = () => {
+    const dark = document.documentElement.dataset.theme === "dark";
+    return {
+      text: dark ? "rgba(245,245,247,.92)" : "rgba(11,11,15,.9)",
+      muted: dark ? "rgba(245,245,247,.5)" : "rgba(11,11,15,.45)",
+      good: dark ? "#5aa7ff" : "#0071e3",
+      bug: "#ff5c5c",
+      player: dark ? "rgba(255,255,255,.92)" : "rgba(11,11,15,.85)",
+      accent: dark ? "#a78bfa" : "#7b61ff",
+    };
+  };
+
+  function reset() {
+    score = 0;
+    lives = 3;
+    items = [];
+    speed = 150;
+    spawnAcc = 0;
+    playerX = W / 2;
+    targetX = W / 2;
+  }
+
+  function start() {
+    reset();
+    state = "run";
+    startBtn.hidden = true;
+    last = performance.now();
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(loop);
+  }
+
+  function finish() {
+    state = "over";
+    if (score > best) {
+      best = score;
+      try {
+        localStorage.setItem(STORE, String(best));
+      } catch (e) {}
+    }
+    startBtn.hidden = false;
+    startBtn.textContent = t("gameRestart");
+    draw();
+  }
+
+  function spawn() {
+    const bug = Math.random() < 0.3;
+    items.push({
+      x: 46 + Math.random() * (W - 92),
+      y: -24,
+      r: bug ? 12 : 9,
+      vy: speed * (0.8 + Math.random() * 0.55),
+      bug,
+    });
+  }
+
+  function draw() {
+    const c = palette();
+    ctx.clearRect(0, 0, W, H);
+
+    // «земля»
+    ctx.fillStyle = c.muted;
+    ctx.globalAlpha = 0.18;
+    ctx.fillRect(0, H - 12, W, 1);
+    ctx.globalAlpha = 1;
+
+    // предмети
+    items.forEach((item) => {
+      ctx.beginPath();
+      ctx.arc(item.x, item.y, item.r, 0, Math.PI * 2);
+      ctx.fillStyle = item.bug ? c.bug : c.good;
+      ctx.shadowColor = item.bug ? c.bug : c.accent;
+      ctx.shadowBlur = 16;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    });
+
+    // платформа
+    const pw = 118;
+    const ph = 12;
+    const px = Math.max(0, Math.min(W - pw, playerX - pw / 2));
+    const py = H - 40;
+    const grad = ctx.createLinearGradient(px, 0, px + pw, 0);
+    grad.addColorStop(0, c.good);
+    grad.addColorStop(1, c.accent);
+    ctx.fillStyle = grad;
+    const r = ph / 2;
+    ctx.beginPath();
+    ctx.moveTo(px + r, py);
+    ctx.arcTo(px + pw, py, px + pw, py + ph, r);
+    ctx.arcTo(px + pw, py + ph, px, py + ph, r);
+    ctx.arcTo(px, py + ph, px, py, r);
+    ctx.arcTo(px, py, px + pw, py, r);
+    ctx.closePath();
+    ctx.fill();
+
+    // HUD
+    ctx.font = "600 20px -apple-system, Segoe UI, sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillStyle = c.text;
+    ctx.fillText(String(score), 20, 36);
+
+    ctx.font = "500 13px -apple-system, Segoe UI, sans-serif";
+    ctx.fillStyle = c.muted;
+    ctx.fillText(`${t("gameBest")} ${best}`, 20, 56);
+
+    ctx.textAlign = "right";
+    ctx.font = "600 16px -apple-system, Segoe UI, sans-serif";
+    ctx.fillStyle = c.bug;
+    ctx.fillText("●".repeat(Math.max(0, lives)), W - 20, 34);
+
+    if (state !== "run") {
+      ctx.textAlign = "center";
+      ctx.fillStyle = c.text;
+      ctx.font = "600 26px -apple-system, Segoe UI, sans-serif";
+      ctx.fillText(state === "over" ? t("gameOver") : t("gameIdle"), W / 2, H / 2 - 6);
+
+      if (state === "over") {
+        ctx.fillStyle = c.muted;
+        ctx.font = "500 16px -apple-system, Segoe UI, sans-serif";
+        ctx.fillText(`${t("gameScore")} ${score} · ${t("gameBest")} ${best}`, W / 2, H / 2 + 26);
+      }
+    }
+  }
+
+  function step(now) {
+    const dt = Math.min(48, now - last) / 1000;
+    last = now;
+
+    playerX += (targetX - playerX) * Math.min(1, dt * 14);
+
+    spawnAcc += dt;
+    const interval = Math.max(0.34, 0.72 - score * 0.012);
+    if (spawnAcc > interval) {
+      spawnAcc = 0;
+      spawn();
+      speed = Math.min(420, speed + 6);
+    }
+
+    const pw = 118;
+    const py = H - 40;
+
+    items = items.filter((item) => {
+      item.y += item.vy * dt;
+
+      const caught = item.y + item.r >= py && item.y - item.r <= py + 12 && Math.abs(item.x - playerX) < pw / 2 + item.r;
+      if (caught) {
+        if (item.bug) {
+          lives -= 1;
+          if (lives <= 0) finish();
+        } else {
+          score += 1;
+        }
+        return false;
+      }
+
+      return item.y < H + 40;
+    });
+  }
+
+  function loop(now) {
+    if (state !== "run") return;
+    step(now);
+    draw();
+    raf = requestAnimationFrame(loop);
+  }
+
+  const pointTo = (clientX) => {
+    const rect = canvas.getBoundingClientRect();
+    const x = ((clientX - rect.left) / rect.width) * W;
+    targetX = Math.max(0, Math.min(W, x));
+  };
+
+  canvas.addEventListener("pointermove", (event) => pointTo(event.clientX));
+  canvas.addEventListener("pointerdown", (event) => {
+    pointTo(event.clientX);
+    if (state !== "run") start();
+  });
+
+  window.addEventListener("keydown", (event) => {
+    if (root.hidden) return;
+    const step = 40;
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      targetX = Math.max(0, targetX - step);
+    }
+    if (event.key === "ArrowRight") {
+      event.preventDefault();
+      targetX = Math.min(W, targetX + step);
+    }
+    if (event.key === " " && state !== "run") {
+      event.preventDefault();
+      start();
+    }
+  });
+
+  const open = () => {
+    root.hidden = false;
+    document.body.style.overflow = "hidden";
+    if (state !== "run") {
+      state = "idle";
+      draw();
+    }
+  };
+
+  const close = () => {
+    root.hidden = true;
+    document.body.style.overflow = "";
+    state = "idle";
+    cancelAnimationFrame(raf);
+  };
+
+  link.addEventListener("click", open);
+  root.addEventListener("click", (event) => {
+    if (event.target.hasAttribute("data-game-close")) close();
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !root.hidden) close();
+  });
+  startBtn.addEventListener("click", start);
+
+  draw();
+}
+
+/* ---------------------------------- 12.9 конфеті -------------- */
+function celebrate() {
+  if (reduceMotion.matches) return;
+
+  const colors = ["#0071e3", "#7b61ff", "#5aa7ff", "#a78bfa", "#34c759"];
+  const total = 48;
+
+  for (let i = 0; i < total; i += 1) {
+    const piece = document.createElement("span");
+    piece.className = "confetti";
+    piece.style.left = `${Math.random() * 100}vw`;
+    piece.style.background = colors[i % colors.length];
+    piece.style.animationDuration = `${1.1 + Math.random() * 1.1}s`;
+    piece.style.animationDelay = `${Math.random() * 0.25}s`;
+    piece.style.transform = `rotate(${Math.random() * 360}deg)`;
+    document.body.appendChild(piece);
+
+    setTimeout(() => piece.remove(), 2600);
+  }
+}
+
 /* ------------------------------------------- старт -------------- */
 $("#year").textContent = new Date().getFullYear();
 document.querySelector("h1").textContent = CONFIG.name;
@@ -1507,6 +1815,7 @@ initPalette();
 initContact();
 initShare();
 initCvPrint();
+initGame();
 initBackToTop();
 initCursorGlow();
 initEasterEgg();
@@ -1514,6 +1823,9 @@ initAnalytics();
 initNetlifyBadgeCleaner();
 initServiceWorker();
 applyLanguage(lang);
+
+
+
 
 
 

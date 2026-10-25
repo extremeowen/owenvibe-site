@@ -292,8 +292,26 @@
       </div>
     </section>
 
-    <footer>© <span id="year">2026</span> <b>extremeowen</b> · <span data-i18n="footer">зроблено на вайбі</span></footer>
+    <footer>
+      © <span id="year">2026</span> <b>extremeowen</b> · <span data-i18n="footer">зроблено на вайбі</span>
+      <button class="game-link" id="gameLink" type="button" data-i18n="gameLink">міні-гра</button>
+    </footer>
   </main>
+
+  <div class="game" id="game" hidden>
+    <div class="game-backdrop" data-game-close></div>
+    <div class="game-box" role="dialog" aria-modal="true" aria-label="Vibe Catcher">
+      <div class="game-head">
+        <span class="game-title">vibe catcher</span>
+        <button class="game-close" type="button" data-game-close aria-label="Закрити">×</button>
+      </div>
+      <div class="game-stage">
+        <canvas id="gameCanvas" width="720" height="480" aria-label="Ігрове поле"></canvas>
+      </div>
+      <p class="game-hint" data-i18n="gameHint">Рухай мишкою або пальцем. Лови світлі крапки, уникай червоних.</p>
+      <button class="submit game-start" type="button" id="gameStart" data-i18n="gameStart">Почати</button>
+    </div>
+  </div>
 
   <button class="to-top" id="toTop" type="button" aria-label="Вгору">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
