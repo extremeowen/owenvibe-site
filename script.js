@@ -1,4 +1,4 @@
-﻿/* ============================================================
+/* ============================================================
    extremeowen — логіка сторінки
    1. CONFIG (що змінювати)   2. Тексти UA/EN   3. Тема
    4. Мова   5. Посилання і копіювання   6. Аватар   7. Анімації
@@ -934,7 +934,7 @@ function closeProjectModal() {
 /* ---------------------------------- статистика GitHub ---------- */
 async function loadRepoStats() {
   const CACHE_KEY = "repoStats";
-  const TTL = 6 * 60 * 60 * 1000;
+  const TTL = 24 * 60 * 60 * 1000;
 
   try {
     const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || "null");
@@ -944,6 +944,31 @@ async function loadRepoStats() {
       return;
     }
   } catch (e) {}
+
+  // 1) статичний файл, який оновлює GitHub Action — без запитів до API
+  try {
+    const response = await fetch("data/repos.json", { cache: "no-store" });
+    if (response.ok) {
+      const json = await response.json();
+      const data = json.repos || {};
+      if (Object.keys(data).length) {
+        projectState.stats = data;
+        try {
+          localStorage.setItem(CACHE_KEY, JSON.stringify({ at: Date.now(), data }));
+        } catch (e) {}
+        renderProjects();
+        return;
+      }
+    }
+  } catch (e) {
+    /* файлу ще немає — падаємо на API */
+  }
+
+  await loadRepoStatsFromApi();
+}
+
+async function loadRepoStatsFromApi() {
+  const CACHE_KEY = "repoStats";
 
   const names = [...new Set(CONFIG.projects.map((p) => repoSlug(p.url)).filter(Boolean).map((s) => s.split("/")[1]))];
   if (!names.length) return;
