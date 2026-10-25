@@ -1390,7 +1390,7 @@ body.is-scrolled .site-header { border-bottom-color: var(--line); }
 
   .bottom-nav {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(6, 1fr);
     position: fixed;
     left: 0;
     right: 0;
@@ -1432,4 +1432,135 @@ body.is-scrolled .site-header { border-bottom-color: var(--line); }
 iframe[src*="netlify.com"],
 iframe[src*="netlify.app"] {
   display: none !important;
+}
+
+/* ============================================================
+   CV-вкладка + перехід між вкладками + друк у PDF
+   ============================================================ */
+
+.panel.is-active.from-right { animation: panel-in-right .34s var(--ease); }
+.panel.is-active.from-left { animation: panel-in-left .34s var(--ease); }
+
+@keyframes panel-in-right {
+  from { opacity: 0; transform: translateX(26px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes panel-in-left {
+  from { opacity: 0; transform: translateX(-26px); }
+  to { opacity: 1; transform: none; }
+}
+
+.cv { align-items: stretch; text-align: left; gap: 18px; }
+
+.cv > h2,
+.cv > .section-lead { text-align: center; align-self: center; }
+
+.cv-block { display: flex; flex-direction: column; gap: 10px; }
+
+.cv-block .subhead { margin: 0; }
+
+.timeline {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.timeline li {
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  gap: 14px;
+  align-items: start;
+}
+
+.timeline .when {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--muted) 85%, transparent);
+  padding-top: 2px;
+}
+
+.timeline b {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: -.01em;
+}
+
+.timeline p {
+  margin: 3px 0 0;
+  font-size: 12.8px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+.cv-skills {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.cv-print { margin-top: 6px; align-self: center; }
+
+/* ---------- друк: тільки CV, без хрому сайту ---------- */
+@media print {
+  :root { color-scheme: light; }
+
+  body {
+    background: #fff !important;
+    color: #111 !important;
+    display: block !important;
+    padding: 0 !important;
+  }
+
+  #bg, .cursor-glow, .site-header, .bottom-nav, .to-top, .palette,
+  #toast, .panel:not(#panel-cv), footer, .cv-print {
+    display: none !important;
+  }
+
+  main.page {
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: block !important;
+  }
+
+  #panel-cv {
+    display: block !important;
+    margin: 0 !important;
+    animation: none !important;
+  }
+
+  .cv h2 { font-size: 20px; color: #111 !important; }
+  .cv .section-lead { color: #444 !important; }
+  .cv .subhead { color: #666 !important; }
+  .timeline .when { color: #666 !important; }
+  .timeline p, .cv-skills { color: #333 !important; }
+  .timeline b { color: #000 !important; }
+
+  .timeline li { break-inside: avoid; page-break-inside: avoid; }
+  .cv-block { break-inside: avoid; }
+}
+
+
+/* ============================================================
+   Доступність: більші зони натискання і контраст дрібного тексту
+   ============================================================ */
+
+.brand { padding-block: 6px; margin-block: -6px; }
+.card-link { padding-block: 4px; margin-block: -4px; }
+.card-demo { padding: 6px 2px; margin: -6px -2px; }
+
+.form-note { color: color-mix(in srgb, var(--muted) 92%, transparent); }
+.note time, .timeline .when { color: color-mix(in srgb, var(--muted) 92%, transparent); }
+
+@media (max-width: 720px) {
+  .ghost { width: 38px; height: 38px; }
+  .ghost-text { padding: 0 12px; }
 }

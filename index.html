@@ -29,6 +29,32 @@
 <meta property="og:url" content="https://owenvibe.netlify.app/" />
 <meta property="og:image" content="https://owenvibe.netlify.app/og-image.png" />
 <meta name="twitter:image" content="https://owenvibe.netlify.app/og-image.png" />
+<meta property="og:locale" content="uk_UA" />
+<meta property="og:locale:alternate" content="en_US" />
+<meta property="og:site_name" content="extremeowen" />
+
+<!-- структуровані дані: Google розуміє, що це сторінка людини -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "extremeowen",
+  "url": "https://owenvibe.netlify.app/",
+  "image": "https://owenvibe.netlify.app/og-image.png",
+  "jobTitle": "Vibe coder",
+  "description": "Вайб-кодер: JavaScript, PWA, C#/.NET. Роблю речі на відчуттях і шиплю швидко.",
+  "sameAs": [
+    "https://github.com/extremeowen",
+    "https://t.me/extremeowen"
+  ],
+  "knowsAbout": ["HTML", "CSS", "JavaScript", "TypeScript", "React", "Node.js", "C#", ".NET", "Flutter", "PWA"],
+  "knowsLanguage": ["uk", "en"],
+  "alumniOf": { "@type": "EducationalOrganization", "name": "College" },
+  "hasPart": [
+    { "@type": "WebSite", "name": "owenvibe", "url": "https://owenvibe.netlify.app/" }
+  ]
+}
+</script>
 
 <script>
   /* тема і мова до першого рендеру — без "миготіння" */
@@ -56,6 +82,7 @@
       <button class="tab" role="tab" type="button" id="tab-home" data-tab="home" aria-controls="panel-home" aria-selected="true">головна</button>
       <button class="tab" role="tab" type="button" id="tab-projects" data-tab="projects" aria-controls="panel-projects" aria-selected="false" tabindex="-1">проєкти</button>
       <button class="tab" role="tab" type="button" id="tab-about" data-tab="about" aria-controls="panel-about" aria-selected="false" tabindex="-1">про мене</button>
+      <button class="tab" role="tab" type="button" id="tab-cv" data-tab="cv" aria-controls="panel-cv" aria-selected="false" tabindex="-1">CV</button>
       <button class="tab" role="tab" type="button" id="tab-notes" data-tab="notes" aria-controls="panel-notes" aria-selected="false" tabindex="-1">нотатки</button>
       <button class="tab" role="tab" type="button" id="tab-contact" data-tab="contact" aria-controls="panel-contact" aria-selected="false" tabindex="-1">контакти</button>
       <span class="tab-indicator" id="tabIndicator" aria-hidden="true"></span>
@@ -165,6 +192,61 @@
       </div>
     </section>
 
+    <!-- ---------- CV ---------- -->
+    <section class="panel" id="panel-cv" role="tabpanel" aria-labelledby="tab-cv" data-panel="cv" hidden>
+      <div class="section cv">
+        <h2 data-i18n="cvTitle">резюме</h2>
+        <p class="section-lead" data-i18n="cvLead">Коротко: що вмію, де вчився і що вже зробив.</p>
+
+        <div class="cv-block">
+          <h3 class="subhead" data-i18n="cvExperience">проєкти й досвід</h3>
+          <ul class="timeline">
+            <li>
+              <span class="when">2026</span>
+              <div>
+                <b data-i18n="cvItem1Title">LED Clock — PWA-годинник</b>
+                <p data-i18n="cvItem1Text">Годинник на LED-табло: будильник, таймер, власні звуки. Встановлюється на телефон, працює офлайн.</p>
+              </div>
+            </li>
+            <li>
+              <span class="when">2026</span>
+              <div>
+                <b data-i18n="cvItem2Title">Фітнес Рулетка — PWA для тренувань</b>
+                <p data-i18n="cvItem2Text">Колесо випадкових вправ, таймер, музика з YouTube, гейміфікація з XP і синхронізація через Firebase.</p>
+              </div>
+            </li>
+            <li>
+              <span class="when">2025</span>
+              <div>
+                <b data-i18n="cvItem3Title">MiniBin — утиліта для Windows</b>
+                <p data-i18n="cvItem3Text">Tray-застосунок на C#/.NET: стан кошика, очищення по Shift+кліку, перетягування файлів.</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="cv-block">
+          <h3 class="subhead" data-i18n="cvEducation">освіта</h3>
+          <ul class="timeline">
+            <li>
+              <span class="when" data-i18n="cvEduWhen">2023—2027</span>
+              <div>
+                <b data-i18n="cvEduTitle">Коледж · розробка програмного забезпечення</b>
+                <p data-i18n="cvEduText">Веб-технології, бази даних, ООП, C#/.NET, Flutter. Курсові та лабораторні — на GitHub.</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="cv-block">
+          <h3 class="subhead" data-i18n="cvSkills">технології</h3>
+          <p class="cv-skills">HTML · CSS · JavaScript · TypeScript · React · Node.js · C# · .NET · Flutter · Git · Firebase · PWA</p>
+        </div>
+
+        <button class="submit cv-print" type="button" id="cvPrint" data-i18n="cvPrint">Завантажити PDF</button>
+      </div>
+    </section>
+
     <!-- ---------- НОТАТКИ ---------- -->
     <section class="panel" id="panel-notes" role="tabpanel" aria-labelledby="tab-notes" data-panel="notes" hidden>
       <div class="section">
@@ -230,6 +312,10 @@
     <button type="button" class="tab" data-tab="about" aria-controls="panel-about" aria-selected="false">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c.7-3.6 3.7-5.6 7.5-5.6s6.8 2 7.5 5.6"/></svg>
       <span data-i18n="tab_about">про мене</span>
+    </button>
+    <button type="button" class="tab" data-tab="cv" aria-controls="panel-cv" aria-selected="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.4" y="4" width="17.2" height="16" rx="2.2"/><path d="M8 3v3M16 3v3M7.8 11h8.4M7.8 15h5"/></svg>
+      <span data-i18n="tab_cv">CV</span>
     </button>
     <button type="button" class="tab" data-tab="notes" aria-controls="panel-notes" aria-selected="false">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h9l5 5v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Z"/><path d="M14 4v5h5M8 13h7M8 17h5"/></svg>

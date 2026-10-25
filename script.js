@@ -1,4 +1,4 @@
-﻿/* ============================================================
+/* ============================================================
    extremeowen — логіка сторінки
    1. CONFIG (що змінювати)   2. Тексти UA/EN   3. Тема
    4. Мова   5. Посилання і копіювання   6. Аватар   7. Анімації
@@ -132,8 +132,24 @@ const I18N = {
     tab_home: "головна",
     tab_projects: "проєкти",
     tab_about: "про мене",
+    tab_cv: "CV",
     tab_notes: "нотатки",
     tab_contact: "контакти",
+    cvTitle: "резюме",
+    cvLead: "Коротко: що вмію, де вчився і що вже зробив.",
+    cvExperience: "проєкти й досвід",
+    cvItem1Title: "LED Clock — PWA-годинник",
+    cvItem1Text: "Годинник на LED-табло: будильник, таймер, власні звуки. Встановлюється на телефон, працює офлайн.",
+    cvItem2Title: "Фітнес Рулетка — PWA для тренувань",
+    cvItem2Text: "Колесо випадкових вправ, таймер, музика з YouTube, гейміфікація з XP і синхронізація через Firebase.",
+    cvItem3Title: "MiniBin — утиліта для Windows",
+    cvItem3Text: "Tray-застосунок на C#/.NET: стан кошика, очищення по Shift+кліку, перетягування файлів.",
+    cvEducation: "освіта",
+    cvEduWhen: "2023—2027",
+    cvEduTitle: "Коледж · розробка програмного забезпечення",
+    cvEduText: "Веб-технології, бази даних, ООП, C#/.NET, Flutter. Курсові та лабораторні — на GitHub.",
+    cvSkills: "технології",
+    cvPrint: "Завантажити PDF",
     notesTitle: "нотатки",
     contactTitle: "контакти",
     contactLead: "Найшвидше — Telegram. Або залиш повідомлення нижче.",
@@ -190,8 +206,24 @@ const I18N = {
     tab_home: "home",
     tab_projects: "projects",
     tab_about: "about",
+    tab_cv: "CV",
     tab_notes: "notes",
     tab_contact: "contact",
+    cvTitle: "resume",
+    cvLead: "Short version: what I can do, where I studied, what I built.",
+    cvExperience: "projects & experience",
+    cvItem1Title: "LED Clock — clock PWA",
+    cvItem1Text: "LED-style clock: alarm, timer, custom sounds. Installs on a phone and works offline.",
+    cvItem2Title: "Fitness Roulette — workout PWA",
+    cvItem2Text: "Random exercise wheel, timer, YouTube music, XP gamification and Firebase sync.",
+    cvItem3Title: "MiniBin — Windows utility",
+    cvItem3Text: "C#/.NET tray app: bin state, Shift+click to empty, drag and drop files.",
+    cvEducation: "education",
+    cvEduWhen: "2023—2027",
+    cvEduTitle: "College · software engineering",
+    cvEduText: "Web technologies, databases, OOP, C#/.NET, Flutter. Coursework and labs are on GitHub.",
+    cvSkills: "technologies",
+    cvPrint: "Download PDF",
     notesTitle: "notes",
     contactTitle: "contact",
     contactLead: "Telegram is fastest. Or leave a message below.",
@@ -770,7 +802,7 @@ function initParticles() {
 }
 
 /* --------------------------------------- 8. вкладки / роутер ---- */
-const TAB_IDS = ["home", "projects", "about", "notes", "contact"];
+const TAB_IDS = ["home", "projects", "about", "cv", "notes", "contact"];
 
 function currentTabFromHash() {
   const id = (location.hash || "").replace(/^#/, "").toLowerCase();
@@ -789,8 +821,12 @@ function moveIndicator() {
   indicator.style.transform = `translateX(${active.offsetLeft}px)`;
 }
 
+let activeTabId = null;
+
 function activateTab(id, { updateHash = true, scroll = true } = {}) {
   if (!TAB_IDS.includes(id)) id = "home";
+
+  const previous = activeTabId;
 
   $$(".tab").forEach((tab) => {
     const active = tab.dataset.tab === id;
@@ -802,7 +838,18 @@ function activateTab(id, { updateHash = true, scroll = true } = {}) {
     const active = panel.dataset.panel === id;
     panel.classList.toggle("is-active", active);
     panel.hidden = !active;
+
+    if (!active) return;
+
+    // напрямок анімації: вліво/вправо залежно від порядку вкладок
+    panel.classList.remove("from-left", "from-right");
+    if (previous && previous !== id) {
+      const toRight = TAB_IDS.indexOf(id) > TAB_IDS.indexOf(previous);
+      panel.classList.add(toRight ? "from-right" : "from-left");
+    }
   });
+
+  activeTabId = id;
 
   moveIndicator();
   updateTitle(id);
@@ -1365,6 +1412,13 @@ function initNetlifyBadgeCleaner() {
   observer.observe(document.body, { childList: true, subtree: true });
 }
 
+/* ---------------------------------- 12.7 друк CV у PDF ---------- */
+function initCvPrint() {
+  const button = $("#cvPrint");
+  if (!button) return;
+  button.addEventListener("click", () => window.print());
+}
+
 /* ---------------------------------- 12.5 поділитися сайтом ----- */
 function initShare() {
   const button = $("#shareBtn");
@@ -1452,6 +1506,7 @@ initSwipe();
 initPalette();
 initContact();
 initShare();
+initCvPrint();
 initBackToTop();
 initCursorGlow();
 initEasterEgg();
@@ -1459,6 +1514,8 @@ initAnalytics();
 initNetlifyBadgeCleaner();
 initServiceWorker();
 applyLanguage(lang);
+
+
 
 
 
