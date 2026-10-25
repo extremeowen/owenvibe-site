@@ -1,4 +1,4 @@
-/* ============================================================
+﻿/* ============================================================
    extremeowen — логіка сторінки
    1. CONFIG (що змінювати)   2. Тексти UA/EN   3. Тема
    4. Мова   5. Посилання і копіювання   6. Аватар   7. Анімації
@@ -45,7 +45,6 @@ const CONFIG = {
       tags: ["PWA", "JavaScript", "Firebase"],
       url: "https://github.com/extremeowen/sport",
       demo: "https://extremeowen.github.io/sport/",
-      shot: "shots/sport.jpg"
     },
     {
       name: { uk: "MiniBin", en: "MiniBin" },
@@ -59,7 +58,6 @@ const CONFIG = {
       tags: ["PWA", "JavaScript", "Vite"],
       url: "https://github.com/extremeowen/app",
       demo: "https://extremeowen.github.io/app/",
-      shot: "shots/app.jpg"
     }
   ],
 
@@ -726,7 +724,7 @@ function renderProjects() {
   const all = CONFIG.projects;
   const projects = projectState.filter === "all" ? all : all.filter((p) => (p.tags || []).includes(projectState.filter));
 
-  projects.forEach((project) => {
+  projects.forEach((project, projectIndex) => {
     const url = normalizeLink(project.url, "project") || project.url || "";
     const demo = normalizeLink(project.demo, "project") || project.demo || "";
     const stats = projectState.stats[repoSlug(url)];
@@ -736,26 +734,27 @@ function renderProjects() {
     card.tabIndex = 0;
     card.setAttribute("role", "button");
     card.setAttribute("aria-label", pick(project.name));
+    card.style.setProperty("--hue", String((206 + projectIndex * 46) % 360));
 
-    if (project.shot) {
-      const shot = document.createElement("img");
-      shot.className = "card-shot";
-      shot.src = project.shot;
-      shot.alt = "";
-      shot.loading = "lazy";
-      shot.decoding = "async";
-      card.appendChild(shot);
-    } else {
-      const placeholder = document.createElement("div");
-      placeholder.className = "card-shot card-shot-ph";
-      placeholder.setAttribute("aria-hidden", "true");
-      placeholder.textContent = pick(project.name)
-        .split(/\s+/)
-        .map((part) => part[0])
-        .join("")
-        .slice(0, 2)
-        .toUpperCase();
-      card.appendChild(placeholder);
+    // спарклайн активності: останні 12 тижнів комітів
+    let sparkEl = null;
+    if (stats && Array.isArray(stats.weekly) && stats.weekly.filter((v) => v > 0).length >= 2) {
+      const spark = document.createElement("div");
+      spark.className = "card-spark";
+      spark.setAttribute("aria-hidden", "true");
+
+      const weeks = stats.weekly.slice(-12);
+      const peak = Math.max(1, ...weeks);
+
+      weeks.forEach((value) => {
+        const bar = document.createElement("span");
+        const height = value === 0 ? 4 : Math.max(8, Math.round((value / peak) * 26));
+        bar.style.height = `${height}px`;
+        bar.style.opacity = value === 0 ? "0.22" : String(0.4 + (value / peak) * 0.6);
+        spark.appendChild(bar);
+      });
+
+      sparkEl = spark;
     }
 
     const name = document.createElement("div");
@@ -770,6 +769,8 @@ function renderProjects() {
     desc.className = "desc";
     desc.textContent = pick(project.desc);
 
+    let metaEl = null;
+    let commitEl = null;
     if (stats && (stats.stars || stats.language)) {
       const meta = document.createElement("div");
       meta.className = "card-stats";
@@ -803,7 +804,24 @@ function renderProjects() {
         meta.appendChild(updated);
       }
 
-      card.appendChild(meta);
+      metaEl = meta;
+    }
+
+    // останній коміт — «живий» рядок замість скріншота
+    if (stats && stats.lastMessage) {
+      const commit = document.createElement("p");
+      commit.className = "card-commit";
+
+      const mark = document.createElement("span");
+      mark.className = "commit-mark";
+      mark.setAttribute("aria-hidden", "true");
+      mark.textContent = "›";
+
+      const text = document.createElement("span");
+      text.textContent = stats.lastMessage;
+
+      commit.append(mark, text);
+      commitEl = commit;
     }
 
     const tags = document.createElement("div");
@@ -829,7 +847,7 @@ function renderProjects() {
       foot.appendChild(demoLink);
     }
 
-    card.append(name, desc, foot);
+    card.append(...[name, desc, sparkEl, metaEl, commitEl, foot].filter(Boolean));
 
     const open = () => openProjectModal(project);
     card.addEventListener("click", open);
@@ -872,20 +890,12 @@ function openProjectModal(project) {
   const modal = $("#projectModal");
   if (!modal) return;
 
-  const shot = $("#projectModalShot");
   const title = $("#projectModalTitle");
   const desc = $("#projectModalDesc");
   const tags = $("#projectModalTags");
   const repo = $("#projectModalRepo");
   const demo = $("#projectModalDemo");
-
-  if (project.shot) {
-    shot.src = project.shot;
-    shot.hidden = false;
-  } else {
-    shot.removeAttribute("src");
-    shot.hidden = true;
-  }
+  const stats = projectState.stats[repoSlug(project.url)];
 
   title.textContent = pick(project.name);
   desc.textContent = pick(project.desc);
@@ -946,14 +956,47 @@ async function loadRepoStats() {
 
     const repos = await response.json();
     const data = {};
+    const targets = [];
+
     repos.forEach((repo) => {
       if (!names.includes(repo.name)) return;
-      data[`${repo.owner.login}/${repo.name}`] = {
+      const slug = `${repo.owner.login}/${repo.name}`;
+      data[slug] = {
         stars: repo.stargazers_count,
         language: repo.language,
         pushed_at: repo.pushed_at,
       };
+      targets.push(slug);
     });
+
+    // додатково: останній коміт + тижнева активність (12 тижнів для спарклайну)
+    await Promise.all(
+      targets.map(async (slug) => {
+        const [commitRes, partRes] = await Promise.all([
+          fetch(`https://api.github.com/repos/${slug}/commits?per_page=1`, {
+            headers: { Accept: "application/vnd.github+json" },
+          }).catch(() => null),
+          fetch(`https://api.github.com/repos/${slug}/stats/participation`, {
+            headers: { Accept: "application/vnd.github+json" },
+          }).catch(() => null),
+        ]);
+
+        if (commitRes && commitRes.ok) {
+          try {
+            const commits = await commitRes.json();
+            const message = commits?.[0]?.commit?.message || "";
+            data[slug].lastMessage = message.split("\n")[0].slice(0, 64);
+          } catch (e) {}
+        }
+
+        if (partRes && partRes.ok) {
+          try {
+            const participation = await partRes.json();
+            if (Array.isArray(participation?.all)) data[slug].weekly = participation.all;
+          } catch (e) {}
+        }
+      })
+    );
 
     projectState.stats = data;
     try {
@@ -2240,6 +2283,11 @@ initAnalytics();
 initNetlifyBadgeCleaner();
 initServiceWorker();
 applyLanguage(lang);
+
+
+
+
+
 
 
 
