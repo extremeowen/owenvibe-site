@@ -1,4 +1,4 @@
-﻿/* ============================================================
+/* ============================================================
    extremeowen — логіка сторінки
    1. CONFIG (що змінювати)   2. Тексти UA/EN   3. Тема
    4. Мова   5. Посилання і копіювання   6. Аватар   7. Анімації
@@ -44,7 +44,8 @@ const CONFIG = {
       desc: { uk: "PWA для домашніх тренувань: колесо вправ, таймер, музика й гейміфікація з XP.", en: "Workout PWA: spinning exercise wheel, timer, music and XP levels." },
       tags: ["PWA", "JavaScript", "Firebase"],
       url: "https://github.com/extremeowen/sport",
-      demo: "https://extremeowen.github.io/sport/"
+      demo: "https://extremeowen.github.io/sport/",
+      shot: "shots/sport.jpg"
     },
     {
       name: { uk: "MiniBin", en: "MiniBin" },
@@ -57,7 +58,8 @@ const CONFIG = {
       desc: { uk: "Годинник на LED-табло: PWA з будильником, таймером і власними звуками.", en: "LED-style clock PWA with alarm, timer and built-in sounds." },
       tags: ["PWA", "JavaScript", "Vite"],
       url: "https://github.com/extremeowen/app",
-      demo: "https://extremeowen.github.io/app/"
+      demo: "https://extremeowen.github.io/app/",
+      shot: "shots/app.jpg"
     }
   ],
 
@@ -181,6 +183,27 @@ const I18N = {
     paletteEmpty: "Нічого не знайшлось",
     paletteTab: "вкладка",
     paletteProject: "проєкт",
+    filterAll: "усі",
+    updatedToday: "оновлено сьогодні",
+    updatedDay: "оновлено вчора",
+    updatedDays: "дн. тому",
+    updatedMonths: "міс. тому",
+    modalRepo: "Репозиторій",
+    modalDemo: "Демо",
+    helpTitle: "Клавіші",
+    helpPalette: "палітра команд",
+    helpHelp: "ця довідка",
+    helpTabs: "перемикання вкладок",
+    helpGame: "міні-гра",
+    helpStart: "старт / рестарт гри",
+    helpClose: "закрити будь-яке вікно",
+    installText: "Поставити сайт іконкою на телефон?",
+    installYes: "Встановити",
+    installNo: "Пізніше",
+    paletteTheme: "тема",
+    paletteLang: "мова",
+    paletteShare: "поділитися",
+    paletteCopyMail: "пошта",
     paletteGame: "гра",
     paletteLink: "посилання",
     writeTelegram: "Написати в Telegram",
@@ -264,6 +287,27 @@ const I18N = {
     paletteEmpty: "Nothing found",
     paletteTab: "tab",
     paletteProject: "project",
+    filterAll: "all",
+    updatedToday: "updated today",
+    updatedDay: "updated yesterday",
+    updatedDays: "days ago",
+    updatedMonths: "months ago",
+    modalRepo: "Repository",
+    modalDemo: "Live demo",
+    helpTitle: "Shortcuts",
+    helpPalette: "command palette",
+    helpHelp: "this help",
+    helpTabs: "switch tabs",
+    helpGame: "mini game",
+    helpStart: "start / restart game",
+    helpClose: "close any dialog",
+    installText: "Add this site to your home screen?",
+    installYes: "Install",
+    installNo: "Later",
+    paletteTheme: "theme",
+    paletteLang: "language",
+    paletteShare: "share",
+    paletteCopyMail: "email",
     paletteGame: "game",
     paletteLink: "link",
     writeTelegram: "Message me on Telegram",
@@ -388,6 +432,7 @@ function applyLanguage(next) {
   const emailLink = $("#emailLink");
   if (emailLink && CONFIG.email) emailLink.title = `${t("copyHint")}: ${CONFIG.email}`;
 
+  renderFilters();
   renderProjects();
   renderNotes();
   startTypewriter();
@@ -655,39 +700,111 @@ const ARROW_SVG =
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
   'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg>';
 
+const projectState = { filter: "all", stats: {} };
+
+function repoSlug(url) {
+  const m = String(url || "").match(/github\.com\/([^/]+)\/([^/?#]+)/i);
+  return m ? `${m[1]}/${m[2]}` : "";
+}
+
+function relativeTime(iso) {
+  if (!iso) return "";
+  const diff = Date.now() - new Date(iso).getTime();
+  const days = Math.round(diff / 86400000);
+  if (days <= 0) return t("updatedToday");
+  if (days === 1) return t("updatedDay");
+  if (days < 30) return `${days} ${t("updatedDays")}`;
+  const months = Math.round(days / 30);
+  return `${months} ${t("updatedMonths")}`;
+}
+
 function renderProjects() {
   const grid = $("#projectGrid");
   if (!grid) return;
   grid.replaceChildren();
 
-  CONFIG.projects.forEach((project) => {
+  const all = CONFIG.projects;
+  const projects = projectState.filter === "all" ? all : all.filter((p) => (p.tags || []).includes(projectState.filter));
+
+  projects.forEach((project) => {
     const url = normalizeLink(project.url, "project") || project.url || "";
     const demo = normalizeLink(project.demo, "project") || project.demo || "";
+    const stats = projectState.stats[repoSlug(url)];
 
     const card = document.createElement("div");
     card.className = "card";
+    card.tabIndex = 0;
+    card.setAttribute("role", "button");
+    card.setAttribute("aria-label", pick(project.name));
+
+    if (project.shot) {
+      const shot = document.createElement("img");
+      shot.className = "card-shot";
+      shot.src = project.shot;
+      shot.alt = "";
+      shot.loading = "lazy";
+      shot.decoding = "async";
+      card.appendChild(shot);
+    } else {
+      const placeholder = document.createElement("div");
+      placeholder.className = "card-shot card-shot-ph";
+      placeholder.setAttribute("aria-hidden", "true");
+      placeholder.textContent = pick(project.name)
+        .split(/\s+/)
+        .map((part) => part[0])
+        .join("")
+        .slice(0, 2)
+        .toUpperCase();
+      card.appendChild(placeholder);
+    }
 
     const name = document.createElement("div");
     name.className = "name";
 
-    if (url) {
-      const link = document.createElement("a");
-      link.className = "card-link";
-      link.href = url;
-      link.target = "_blank";
-      link.rel = "noopener noreferrer";
-      link.textContent = pick(project.name);
-      link.insertAdjacentHTML("beforeend", ARROW_SVG);
-      name.appendChild(link);
-    } else {
-      const span = document.createElement("span");
-      span.textContent = pick(project.name);
-      name.appendChild(span);
-    }
+    const title = document.createElement("span");
+    title.textContent = pick(project.name);
+    name.appendChild(title);
+    if (url) name.insertAdjacentHTML("beforeend", ARROW_SVG);
 
     const desc = document.createElement("p");
     desc.className = "desc";
     desc.textContent = pick(project.desc);
+
+    if (stats && (stats.stars || stats.language)) {
+      const meta = document.createElement("div");
+      meta.className = "card-stats";
+
+      if (stats.stars) {
+        const stars = document.createElement("span");
+        stars.textContent = `★ ${stats.stars}`;
+        meta.appendChild(stars);
+      }
+
+      if (stats.language) {
+        if (meta.childNodes.length) {
+          const sep = document.createElement("span");
+          sep.className = "dot-sep";
+          sep.textContent = "·";
+          meta.appendChild(sep);
+        }
+        const lang = document.createElement("span");
+        lang.textContent = stats.language;
+        meta.appendChild(lang);
+      }
+
+      if (stats.pushed_at) {
+        const sep = document.createElement("span");
+        sep.className = "dot-sep";
+        sep.textContent = "·";
+        meta.appendChild(sep);
+
+        const updated = document.createElement("span");
+        updated.textContent = relativeTime(stats.pushed_at);
+        meta.appendChild(updated);
+      }
+
+      card.appendChild(meta);
+    }
 
     const tags = document.createElement("div");
     tags.className = "tags";
@@ -708,12 +825,144 @@ function renderProjects() {
       demoLink.target = "_blank";
       demoLink.rel = "noopener noreferrer";
       demoLink.textContent = `${t("demoLabel")} ↗`;
+      demoLink.addEventListener("click", (event) => event.stopPropagation());
       foot.appendChild(demoLink);
     }
 
     card.append(name, desc, foot);
+
+    const open = () => openProjectModal(project);
+    card.addEventListener("click", open);
+    card.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        open();
+      }
+    });
+
     grid.appendChild(card);
   });
+}
+
+/* ---------------------------------- фільтри + модалка ---------- */
+function renderFilters() {
+  const host = $("#projectFilters");
+  if (!host) return;
+  host.replaceChildren();
+
+  const tags = [...new Set(CONFIG.projects.flatMap((p) => p.tags || []))].slice(0, 6);
+  const options = [{ key: "all", label: t("filterAll") }, ...tags.map((tag) => ({ key: tag, label: tag }))];
+
+  options.forEach((option) => {
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = "chip";
+    chip.textContent = option.label;
+    chip.setAttribute("aria-pressed", String(projectState.filter === option.key));
+    chip.addEventListener("click", () => {
+      projectState.filter = option.key;
+      renderFilters();
+      renderProjects();
+    });
+    host.appendChild(chip);
+  });
+}
+
+function openProjectModal(project) {
+  const modal = $("#projectModal");
+  if (!modal) return;
+
+  const shot = $("#projectModalShot");
+  const title = $("#projectModalTitle");
+  const desc = $("#projectModalDesc");
+  const tags = $("#projectModalTags");
+  const repo = $("#projectModalRepo");
+  const demo = $("#projectModalDemo");
+
+  if (project.shot) {
+    shot.src = project.shot;
+    shot.hidden = false;
+  } else {
+    shot.removeAttribute("src");
+    shot.hidden = true;
+  }
+
+  title.textContent = pick(project.name);
+  desc.textContent = pick(project.desc);
+
+  tags.replaceChildren();
+  (project.tags || []).forEach((tag) => {
+    const chip = document.createElement("span");
+    chip.textContent = tag;
+    tags.appendChild(chip);
+  });
+
+  const repoUrl = normalizeLink(project.url, "project") || project.url || "";
+  const demoUrl = normalizeLink(project.demo, "project") || project.demo || "";
+
+  repo.hidden = !repoUrl;
+  if (repoUrl) repo.href = repoUrl;
+
+  demo.hidden = !demoUrl;
+  if (demoUrl) demo.href = demoUrl;
+
+  modal.hidden = false;
+  document.body.style.overflow = "hidden";
+  lastFocused = document.activeElement;
+  const close = modal.querySelector(".modal-close");
+  if (close) close.focus();
+}
+
+function closeProjectModal() {
+  const modal = $("#projectModal");
+  if (!modal) return;
+  modal.hidden = true;
+  document.body.style.overflow = "";
+  if (lastFocused && lastFocused.focus) lastFocused.focus();
+}
+
+/* ---------------------------------- статистика GitHub ---------- */
+async function loadRepoStats() {
+  const CACHE_KEY = "repoStats";
+  const TTL = 6 * 60 * 60 * 1000;
+
+  try {
+    const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || "null");
+    if (cached && Date.now() - cached.at < TTL) {
+      projectState.stats = cached.data || {};
+      renderProjects();
+      return;
+    }
+  } catch (e) {}
+
+  const names = [...new Set(CONFIG.projects.map((p) => repoSlug(p.url)).filter(Boolean).map((s) => s.split("/")[1]))];
+  if (!names.length) return;
+
+  try {
+    const response = await fetch("https://api.github.com/users/extremeowen/repos?per_page=100&sort=pushed", {
+      headers: { Accept: "application/vnd.github+json" },
+    });
+    if (!response.ok) return;
+
+    const repos = await response.json();
+    const data = {};
+    repos.forEach((repo) => {
+      if (!names.includes(repo.name)) return;
+      data[`${repo.owner.login}/${repo.name}`] = {
+        stars: repo.stargazers_count,
+        language: repo.language,
+        pushed_at: repo.pushed_at,
+      };
+    });
+
+    projectState.stats = data;
+    try {
+      localStorage.setItem(CACHE_KEY, JSON.stringify({ at: Date.now(), data }));
+    } catch (e) {}
+    renderProjects();
+  } catch (e) {
+    /* офлайн або ліміт API — просто без статистики */
+  }
 }
 
 /* ------------------------------------------- частинки ----------- */
@@ -981,6 +1230,34 @@ function paletteItems() {
     action: () => {
       const link = $("#gameLink");
       if (link) link.click();
+    },
+  });
+
+  // команди-дії
+  items.push({
+    label: t("themeTitle"),
+    kicker: t("paletteTheme"),
+    action: () => {
+      const themeBtn = $("#themeToggle");
+      if (themeBtn) themeBtn.click();
+    },
+  });
+
+  items.push({
+    label: t("langTitle"),
+    kicker: t("paletteLang"),
+    action: () => {
+      const langBtn = $("#langToggle");
+      if (langBtn) langBtn.click();
+    },
+  });
+
+  items.push({
+    label: t("shareTitleBtn"),
+    kicker: t("paletteShare"),
+    action: () => {
+      const shareBtn = $("#shareBtn");
+      if (shareBtn) shareBtn.click();
     },
   });
 
@@ -1523,6 +1800,142 @@ function initServiceWorker() {
   });
 }
 
+/* ------------------------------- 12.7b оверлеї, довідка -------- */
+let lastFocused = null;
+
+function overlayFocusables(root) {
+  return [...root.querySelectorAll('a[href], button:not([disabled]), input:not([type="hidden"]), textarea, [tabindex]:not([tabindex="-1"])')]
+    .filter((el) => el.offsetParent !== null);
+}
+
+function initOverlayKeys() {
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Tab") return;
+
+    const open = ["#projectModal", "#help", "#game", "#palette"]
+      .map((sel) => $(sel))
+      .filter((el) => el && !el.hidden)
+      .pop();
+    if (!open) return;
+
+    const items = overlayFocusables(open);
+    if (!items.length) return;
+
+    const first = items[0];
+    const last = items[items.length - 1];
+
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  });
+}
+
+function initProjectsUi() {
+  renderFilters();
+  renderProjects();
+  loadRepoStats();
+
+  const modal = $("#projectModal");
+  if (modal) {
+    modal.addEventListener("click", (event) => {
+      if (event.target.hasAttribute("data-modal-close")) closeProjectModal();
+    });
+  }
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && modal && !modal.hidden) closeProjectModal();
+  });
+}
+
+function initHelp() {
+  const help = $("#help");
+  if (!help) return;
+
+  const open = () => {
+    help.hidden = false;
+    document.body.style.overflow = "hidden";
+    const close = help.querySelector(".modal-close");
+    if (close) close.focus();
+  };
+
+  const close = () => {
+    help.hidden = true;
+    document.body.style.overflow = "";
+  };
+
+  help.addEventListener("click", (event) => {
+    if (event.target.hasAttribute("data-help-close")) close();
+  });
+
+  document.addEventListener("keydown", (event) => {
+    const tag = (event.target.tagName || "").toLowerCase();
+    const typing = tag === "input" || tag === "textarea";
+
+    if (event.key === "Escape" && !help.hidden) close();
+
+    if (event.key === "?" && !typing && help.hidden) {
+      event.preventDefault();
+      open();
+    }
+
+    if (event.key.toLowerCase() === "g" && !typing && help.hidden) {
+      const gameLink = $("#gameLink");
+      const game = $("#game");
+      if (gameLink && game && game.hidden) {
+        event.preventDefault();
+        gameLink.click();
+      }
+    }
+  });
+}
+
+function initInstallPrompt() {
+  const banner = $("#installBanner");
+  if (!banner) return;
+
+  let deferred = null;
+  let dismissed = false;
+  try {
+    dismissed = localStorage.getItem("installDismissed") === "1";
+  } catch (e) {}
+
+  window.addEventListener("beforeinstallprompt", (event) => {
+    event.preventDefault();
+    deferred = event;
+    if (!dismissed) banner.hidden = false;
+  });
+
+  const yes = $("#installYes");
+  if (yes) {
+    yes.addEventListener("click", async () => {
+      banner.hidden = true;
+      if (!deferred) return;
+      deferred.prompt();
+      await deferred.userChoice.catch(() => {});
+      deferred = null;
+    });
+  }
+
+  const no = $("#installNo");
+  if (no) {
+    no.addEventListener("click", () => {
+      banner.hidden = true;
+      dismissed = true;
+      try {
+        localStorage.setItem("installDismissed", "1");
+      } catch (e) {}
+    });
+  }
+
+  window.addEventListener("appinstalled", () => {
+    banner.hidden = true;
+  });
+}
+
 /* ---------------------------------- 12.8 міні-гра -------------- */
 function initGame() {
   const root = $("#game");
@@ -1816,6 +2229,10 @@ initContact();
 initShare();
 initCvPrint();
 initGame();
+initProjectsUi();
+initHelp();
+initInstallPrompt();
+initOverlayKeys();
 initBackToTop();
 initCursorGlow();
 initEasterEgg();
@@ -1823,6 +2240,10 @@ initAnalytics();
 initNetlifyBadgeCleaner();
 initServiceWorker();
 applyLanguage(lang);
+
+
+
+
 
 
 

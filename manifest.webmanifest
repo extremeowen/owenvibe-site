@@ -9,6 +9,26 @@
   "display": "standalone",
   "background_color": "#0a0a0c",
   "theme_color": "#0a0a0c",
+  "shortcuts": [
+    {
+      "name": "Проєкти",
+      "short_name": "Проєкти",
+      "url": "./#projects",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Контакти",
+      "short_name": "Контакти",
+      "url": "./#contact",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "CV",
+      "short_name": "CV",
+      "url": "./#cv",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    }
+  ],
   "icons": [
     {
       "src": "icon-192.png",
@@ -30,3 +50,4 @@
     }
   ]
 }
+
