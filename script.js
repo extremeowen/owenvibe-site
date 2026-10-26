@@ -1,4 +1,4 @@
-/* ============================================================
+﻿/* ============================================================
    extremeowen — логіка сторінки
    1. CONFIG (що змінювати)   2. Тексти UA/EN   3. Тема
    4. Мова   5. Посилання і копіювання   6. Аватар   7. Анімації
@@ -69,7 +69,7 @@ const CONFIG = {
      GoatCounter: створи акаунт на goatcounter.com і впиши код, напр. "extremeowen". */
   analytics: {
     plausibleDomain: "",
-    goatcounter: ""
+    goatcounter: "owen"
   },
 
   /* Куди приходять повідомлення з форми «контакти». Обери один спосіб:
@@ -2382,6 +2382,7 @@ initAnalytics();
 initNetlifyBadgeCleaner();
 initServiceWorker();
 applyLanguage(lang);
+
 
 
 
