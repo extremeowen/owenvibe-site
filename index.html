@@ -70,6 +70,8 @@
 </script>
 </head>
 <body>
+  <a class="skip-link" href="#main">Перейти до контенту</a>
+
   <canvas id="bg" aria-hidden="true"></canvas>
   <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
 
@@ -101,7 +103,7 @@
     </div>
   </header>
 
-  <main class="page">
+  <main class="page" id="main">
     <!-- ---------- ГОЛОВНА ---------- -->
     <section class="panel is-active" id="panel-home" role="tabpanel" aria-labelledby="tab-home" data-panel="home">
       <div class="hero">
@@ -245,7 +247,8 @@
           <p class="cv-skills">HTML · CSS · JavaScript · TypeScript · React · Node.js · C# · .NET · Flutter · Git · Firebase · PWA</p>
         </div>
 
-        <button class="submit cv-print" type="button" id="cvPrint" data-i18n="cvPrint">Завантажити PDF</button>
+        <a class="submit cv-print" id="cvDownload" href="cv.pdf" download="extremeowen-cv.pdf" data-i18n="cvPrint">Завантажити PDF</a>
+        <button class="cv-print-link" type="button" id="cvPrint" data-i18n="cvPrintHint">або надрукувати</button>
       </div>
     </section>
 
@@ -413,6 +416,8 @@
 </noscript>
 </body>
 </html>
+
+
 
 
 

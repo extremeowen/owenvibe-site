@@ -1,4 +1,4 @@
-﻿/* ============================================================
+/* ============================================================
    extremeowen РІР‚вЂќ РЎРѓРЎвЂљР С‘Р В»РЎвЂ“
    1. Р СћР С•Р С”Р ВµР Р…Р С‘ (Р С”Р С•Р В»РЎРЉР С•РЎР‚Р С‘)   2. Р вЂР В°Р В·Р В°   3. Р В¤Р С•Р Р…   4. Р С™Р Р…Р С•Р С—Р С”Р С‘ Р Р†Р С–Р С•РЎР‚РЎвЂ“
    5. Р С’Р Р†Р В°РЎвЂљР В°РЎР‚   6. Р С™Р С•Р Р…РЎвЂљР ВµР Р…РЎвЂљ   7. Р СћР С•РЎРѓРЎвЂљР С‘   8. Р С’Р Т‘Р В°Р С—РЎвЂљР С‘Р Р†
@@ -1520,7 +1520,8 @@ iframe[src*="netlify.app"] {
   }
 
   #bg, .cursor-glow, .site-header, .bottom-nav, .to-top, .palette,
-  #toast, .panel:not(#panel-cv), footer, .cv-print {
+  #toast, .panel:not(#panel-cv), footer, .cv-print,
+  .install, .net-badge, .game, .modal, .frag, .cv-print-link {
     display: none !important;
   }
 
@@ -2048,4 +2049,70 @@ kbd {
 @media (max-width: 420px) {
   .install { font-size: 12px; padding: 8px 10px 8px 12px; gap: 8px; }
   .install-yes { padding: 7px 12px; font-size: 12px; }
+}
+
+
+/* ---------- друк CV: читабельніші розміри ---------- */
+@media print {
+  #panel-cv { padding: 0 6mm !important; }
+
+  .cv { gap: 14px !important; }
+  .cv h2 { font-size: 25pt !important; letter-spacing: -.02em; }
+  .cv .section-lead { font-size: 12pt !important; }
+
+  .cv .subhead {
+    font-size: 10.5pt !important;
+    letter-spacing: .16em !important;
+    margin-top: 8px !important;
+  }
+
+  .timeline { gap: 12px !important; }
+  .timeline li { grid-template-columns: 108px 1fr !important; gap: 12px !important; }
+  .timeline .when { font-size: 9.5pt !important; }
+  .timeline b { font-size: 12.5pt !important; }
+  .timeline p { font-size: 11pt !important; line-height: 1.5 !important; margin-top: 2px !important; }
+  .cv-skills { font-size: 11pt !important; line-height: 1.55 !important; }
+}
+
+/* посилання «або надрукувати» під кнопкою CV */
+.cv-print-link {
+  appearance: none;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font: inherit;
+  font-size: 11.5px;
+  color: color-mix(in srgb, var(--muted) 92%, transparent);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--muted) 40%, transparent);
+  text-underline-offset: 3px;
+  padding: 2px;
+  align-self: center;
+  margin-top: -4px;
+}
+
+.cv-print-link:hover { color: var(--fg); }
+
+
+/* skip-link для клавіатурної навігації */
+.skip-link {
+  position: absolute;
+  left: 12px;
+  top: -60px;
+  z-index: 100;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: var(--fg);
+  color: var(--bg);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: top .2s var(--ease);
+}
+
+.skip-link:focus-visible,
+.skip-link:focus {
+  top: 12px;
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }

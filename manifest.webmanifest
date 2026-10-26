@@ -1,4 +1,5 @@
 {
+  "id": "/",
   "name": "extremeowen — vibe coding",
   "short_name": "extremeowen",
   "description": "Вайб-кодер: проєкти, стек і посилання.",
@@ -15,87 +16,102 @@
       "short_name": "Проєкти",
       "url": "./#projects",
       "screenshots": [
-    {
-      "src": "shot-home.jpg",
-      "sizes": "1080x1920",
-      "type": "image/jpeg",
-      "form_factor": "narrow",
-      "label": "Головна — extremeowen"
-    },
-    {
-      "src": "shot-projects.jpg",
-      "sizes": "1080x1920",
-      "type": "image/jpeg",
-      "form_factor": "narrow",
-      "label": "Проєкти з прев'ю та фільтрами"
-    },
-    {
-      "src": "shot-cv.jpg",
-      "sizes": "1080x1920",
-      "type": "image/jpeg",
-      "form_factor": "narrow",
-      "label": "Резюме з експортом у PDF"
-    }
-  ],
-  "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+        {
+          "src": "shot-home.jpg",
+          "sizes": "1080x1920",
+          "type": "image/jpeg",
+          "form_factor": "narrow",
+          "label": "Головна — extremeowen"
+        },
+        {
+          "src": "shot-projects.jpg",
+          "sizes": "1080x1920",
+          "type": "image/jpeg",
+          "form_factor": "narrow",
+          "label": "Проєкти з прев'ю та фільтрами"
+        },
+        {
+          "src": "shot-cv.jpg",
+          "sizes": "1080x1920",
+          "type": "image/jpeg",
+          "form_factor": "narrow",
+          "label": "Резюме з експортом у PDF"
+        }
+      ],
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
     },
     {
       "name": "Контакти",
       "short_name": "Контакти",
       "url": "./#contact",
       "screenshots": [
-    {
-      "src": "shot-home.jpg",
-      "sizes": "1080x1920",
-      "type": "image/jpeg",
-      "form_factor": "narrow",
-      "label": "Головна — extremeowen"
-    },
-    {
-      "src": "shot-projects.jpg",
-      "sizes": "1080x1920",
-      "type": "image/jpeg",
-      "form_factor": "narrow",
-      "label": "Проєкти з прев'ю та фільтрами"
-    },
-    {
-      "src": "shot-cv.jpg",
-      "sizes": "1080x1920",
-      "type": "image/jpeg",
-      "form_factor": "narrow",
-      "label": "Резюме з експортом у PDF"
-    }
-  ],
-  "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+        {
+          "src": "shot-home.jpg",
+          "sizes": "1080x1920",
+          "type": "image/jpeg",
+          "form_factor": "narrow",
+          "label": "Головна — extremeowen"
+        },
+        {
+          "src": "shot-projects.jpg",
+          "sizes": "1080x1920",
+          "type": "image/jpeg",
+          "form_factor": "narrow",
+          "label": "Проєкти з прев'ю та фільтрами"
+        },
+        {
+          "src": "shot-cv.jpg",
+          "sizes": "1080x1920",
+          "type": "image/jpeg",
+          "form_factor": "narrow",
+          "label": "Резюме з експортом у PDF"
+        }
+      ],
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
     },
     {
       "name": "CV",
       "short_name": "CV",
       "url": "./#cv",
       "screenshots": [
-    {
-      "src": "shot-home.jpg",
-      "sizes": "1080x1920",
-      "type": "image/jpeg",
-      "form_factor": "narrow",
-      "label": "Головна — extremeowen"
-    },
-    {
-      "src": "shot-projects.jpg",
-      "sizes": "1080x1920",
-      "type": "image/jpeg",
-      "form_factor": "narrow",
-      "label": "Проєкти з прев'ю та фільтрами"
-    },
-    {
-      "src": "shot-cv.jpg",
-      "sizes": "1080x1920",
-      "type": "image/jpeg",
-      "form_factor": "narrow",
-      "label": "Резюме з експортом у PDF"
-    }
-  ],
-  "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+        {
+          "src": "shot-home.jpg",
+          "sizes": "1080x1920",
+          "type": "image/jpeg",
+          "form_factor": "narrow",
+          "label": "Головна — extremeowen"
+        },
+        {
+          "src": "shot-projects.jpg",
+          "sizes": "1080x1920",
+          "type": "image/jpeg",
+          "form_factor": "narrow",
+          "label": "Проєкти з прев'ю та фільтрами"
+        },
+        {
+          "src": "shot-cv.jpg",
+          "sizes": "1080x1920",
+          "type": "image/jpeg",
+          "form_factor": "narrow",
+          "label": "Резюме з експортом у PDF"
+        }
+      ],
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
     }
   ],
   "screenshots": [
@@ -142,6 +158,3 @@
     }
   ]
 }
-
-
-

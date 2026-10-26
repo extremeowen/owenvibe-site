@@ -160,6 +160,7 @@ const I18N = {
     gameOver: "Гру закінчено",
     gameIdle: "Готовий?",
     cvPrint: "Завантажити PDF",
+    cvPrintHint: "або надрукувати",
     notesTitle: "нотатки",
     contactTitle: "контакти",
     contactLead: "Найшвидше — Telegram. Або залиш повідомлення нижче.",
@@ -268,6 +269,7 @@ const I18N = {
     gameOver: "Game over",
     gameIdle: "Ready?",
     cvPrint: "Download PDF",
+    cvPrintHint: "or print it",
     notesTitle: "notes",
     contactTitle: "contact",
     contactLead: "Telegram is fastest. Or leave a message below.",
@@ -2477,6 +2479,7 @@ initAnalytics();
 initNetlifyBadgeCleaner();
 initServiceWorker();
 applyLanguage(lang);
+
 
 
 
