@@ -671,12 +671,33 @@ function startTypewriter() {
 
 let statusGeneration = 0;
 
+let liveStatus = { uk: "", en: "" };
+
+/* «зараз:» бере реальний останній коміт із GitHub */
+function applyLiveStatus() {
+  const entries = Object.entries(projectState.stats || {}).filter(([, data]) => data && data.lastMessage && data.pushed_at);
+  if (!entries.length) return;
+
+  entries.sort((a, b) => new Date(b[1].pushed_at) - new Date(a[1].pushed_at));
+  const [slug, data] = entries[0];
+  const name = slug.split("/")[1];
+  const raw = String(data.lastMessage).trim();
+  const message = raw.length > 38 ? `${raw.slice(0, 38).trimEnd()}…` : raw;
+
+  liveStatus = {
+    uk: `${name}: ${message}`,
+    en: `${name}: ${message}`,
+  };
+
+  if (typeof startStatus === "function") startStatus();
+}
+
 function startStatus() {
   const el = $("#statusText");
   if (!el) return;
 
   const generation = ++statusGeneration;
-  const list = CONFIG.statuses[lang] || [];
+  const list = [liveStatus[lang], ...(CONFIG.statuses[lang] || [])].filter(Boolean);
   if (!list.length) {
     el.textContent = "";
     return;
@@ -951,6 +972,7 @@ async function loadRepoStats() {
     if (cached && Date.now() - cached.at < TTL) {
       projectState.stats = cached.data || {};
       renderProjects();
+      applyLiveStatus();
       return;
     }
   } catch (e) {}
@@ -967,6 +989,7 @@ async function loadRepoStats() {
           localStorage.setItem(CACHE_KEY, JSON.stringify({ at: Date.now(), data }));
         } catch (e) {}
         renderProjects();
+        applyLiveStatus();
         return;
       }
     }
@@ -1038,6 +1061,7 @@ async function loadRepoStatsFromApi() {
       localStorage.setItem(CACHE_KEY, JSON.stringify({ at: Date.now(), data }));
     } catch (e) {}
     renderProjects();
+    applyLiveStatus();
   } catch (e) {
     /* офлайн або ліміт API — просто без статистики */
   }
@@ -2358,6 +2382,9 @@ initAnalytics();
 initNetlifyBadgeCleaner();
 initServiceWorker();
 applyLanguage(lang);
+
+
+
 
 
 

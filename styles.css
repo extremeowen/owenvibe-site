@@ -1986,3 +1986,14 @@ kbd {
 }
 
 .field.is-invalid label { color: #ff8a8a; }
+
+/* «зараз:» — один рядок з трикрапкою, якщо коміт довгий */
+#statusText {
+  display: inline-block;
+  max-width: min(70vw, 420px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: bottom;
+  transition: opacity .3s var(--ease);
+}

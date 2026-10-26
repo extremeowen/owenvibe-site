@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="theme-color" content="#f5f5f7" />
+  <title>extremeowen — немає з'єднання</title>
+  <link rel="icon" href="favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" href="favicon-32.png" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .offline {
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .offline-card {
+      max-width: 420px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .offline-mark {
+      width: 64px;
+      height: 64px;
+      border-radius: 20px;
+      display: grid;
+      place-items: center;
+      font-size: 26px;
+      font-weight: 700;
+      color: #fff;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 18px 40px -18px color-mix(in srgb, var(--accent) 80%, transparent);
+    }
+
+    .offline h1 {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: -.02em;
+    }
+
+    .offline p {
+      margin: 0;
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+
+    .offline-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 6px;
+    }
+  </style>
+</head>
+<body>
+  <main class="offline">
+    <div class="offline-card">
+      <div class="offline-mark" aria-hidden="true">⚡</div>
+      <h1>Немає з'єднання</h1>
+      <p>
+        Схоже, інтернет зник. Сторінка збережена в кеші — спробуй відкрити її знову,
+        коли мережа повернеться.
+      </p>
+      <div class="offline-actions">
+        <button class="cta" type="button" onclick="location.reload()">Спробувати ще раз</button>
+        <a class="cta cta-quiet" href="./">На головну</a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    /* коли мережа повернеться — тихо перезавантажуємо */
+    window.addEventListener("online", function () {
+      location.reload();
+    });
+  </script>
+</body>
+</html>

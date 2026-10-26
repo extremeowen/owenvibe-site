@@ -1,12 +1,14 @@
 /* Сервіс-воркер: сайт працює офлайн і відкривається миттєво з кешу.
    Коли щось зміниш у файлах — підніми версію нижче (v2, v3...),
    інакше браузер показуватиме стару копію. */
-const CACHE = "extremeowen-v15";
+const CACHE = "extremeowen-v16";
+const OFFLINE = "./offline.html";
 
 const ASSETS = [
   "./",
   "./index.html",
   "./404.html",
+  "./offline.html",
   "./styles.css",
   "./script.js",
   "./avatar.jpg",
@@ -47,6 +49,25 @@ self.addEventListener("fetch", (event) => {
   if (request.method !== "GET") return;
   if (new URL(request.url).origin !== self.location.origin) return;
 
+  // навігація: спершу мережа (щоб оновлення долітали), офлайн — кеш, інакше offline.html
+  if (request.mode === "navigate") {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          const copy = response.clone();
+          caches.open(CACHE).then((cache) => cache.put(request, copy));
+          return response;
+        })
+        .catch(() =>
+          caches
+            .match(request)
+            .then((cached) => cached || caches.match("./index.html"))
+            .then((cached) => cached || caches.match(OFFLINE))
+        )
+    );
+    return;
+  }
+
   event.respondWith(
     caches.match(request).then((cached) => {
       if (cached) return cached;
@@ -56,18 +77,7 @@ self.addEventListener("fetch", (event) => {
           caches.open(CACHE).then((cache) => cache.put(request, copy));
           return response;
         })
-        .catch(() => caches.match("./index.html"));
+        .catch(() => caches.match(OFFLINE));
     })
   );
 });
-
-
-
-
-
-
-
-
-
-
-

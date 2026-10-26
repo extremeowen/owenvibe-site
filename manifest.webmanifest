@@ -14,19 +14,111 @@
       "name": "Проєкти",
       "short_name": "Проєкти",
       "url": "./#projects",
-      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+      "screenshots": [
+    {
+      "src": "screenshots/home.jpg",
+      "sizes": "1080x1920",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "Головна — extremeowen"
+    },
+    {
+      "src": "screenshots/projects.jpg",
+      "sizes": "1080x1920",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "Проєкти з прев'ю та фільтрами"
+    },
+    {
+      "src": "screenshots/cv.jpg",
+      "sizes": "1080x1920",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "Резюме з експортом у PDF"
+    }
+  ],
+  "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "Контакти",
       "short_name": "Контакти",
       "url": "./#contact",
-      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+      "screenshots": [
+    {
+      "src": "screenshots/home.jpg",
+      "sizes": "1080x1920",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "Головна — extremeowen"
+    },
+    {
+      "src": "screenshots/projects.jpg",
+      "sizes": "1080x1920",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "Проєкти з прев'ю та фільтрами"
+    },
+    {
+      "src": "screenshots/cv.jpg",
+      "sizes": "1080x1920",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "Резюме з експортом у PDF"
+    }
+  ],
+  "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "CV",
       "short_name": "CV",
       "url": "./#cv",
-      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+      "screenshots": [
+    {
+      "src": "screenshots/home.jpg",
+      "sizes": "1080x1920",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "Головна — extremeowen"
+    },
+    {
+      "src": "screenshots/projects.jpg",
+      "sizes": "1080x1920",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "Проєкти з прев'ю та фільтрами"
+    },
+    {
+      "src": "screenshots/cv.jpg",
+      "sizes": "1080x1920",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "Резюме з експортом у PDF"
+    }
+  ],
+  "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshots/home.jpg",
+      "sizes": "1080x1920",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "Головна — extremeowen"
+    },
+    {
+      "src": "screenshots/projects.jpg",
+      "sizes": "1080x1920",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "Проєкти з прев'ю та фільтрами"
+    },
+    {
+      "src": "screenshots/cv.jpg",
+      "sizes": "1080x1920",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "Резюме з експортом у PDF"
     }
   ],
   "icons": [
@@ -50,4 +142,5 @@
     }
   ]
 }
+
 
