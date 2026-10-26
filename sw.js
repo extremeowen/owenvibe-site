@@ -1,7 +1,7 @@
 ﻿/* Сервіс-воркер: сайт працює офлайн і відкривається миттєво з кешу.
    Коли щось зміниш у файлах — підніми версію нижче (v2, v3...),
    інакше браузер показуватиме стару копію. */
-const CACHE = "extremeowen-v19";
+const CACHE = "extremeowen-v20";
 const OFFLINE = "./offline.html";
 
 const ASSETS = [
@@ -79,15 +79,14 @@ self.addEventListener("message", (event) => {
 });
 
 async function navigateFallback(request) {
-  const cache = await caches.open(CACHE);
-
-  const exact = await cache.match(request);
+  // шукаємо в усіх кешах — і в нашому, і в тому, що зробила кнопка «зберегти офлайн»
+  const exact = await caches.match(request);
   if (exact) return exact;
 
-  const index = await cache.match("./index.html");
+  const index = await caches.match("./index.html");
   if (index) return index;
 
-  const offline = await cache.match(OFFLINE);
+  const offline = await caches.match(OFFLINE);
   if (offline) return offline;
 
   return new Response(FALLBACK, {
@@ -132,4 +131,5 @@ self.addEventListener("fetch", (event) => {
     })
   );
 });
+
 

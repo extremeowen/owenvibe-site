@@ -1,4 +1,4 @@
-/* ============================================================
+﻿/* ============================================================
    extremeowen — логіка сторінки
    1. CONFIG (що змінювати)   2. Тексти UA/EN   3. Тема
    4. Мова   5. Посилання і копіювання   6. Аватар   7. Анімації
@@ -149,6 +149,10 @@ const I18N = {
     cvEduTitle: "Коледж · розробка програмного забезпечення",
     cvEduText: "Веб-технології, бази даних, ООП, C#/.NET, Flutter. Курсові та лабораторні — на GitHub.",
     cvSkills: "технології",
+    offlineSave: "зберегти офлайн",
+    offlineSaved: "Офлайн готово — сторінка відкриється без інтернету",
+    offlineSavedShort: "офлайн ✓",
+    offlineFailed: "Не вдалось зберегти офлайн:",
     gameLink: "міні-гра",
     gameHint: "Рухай мишкою або пальцем. Лови світлі крапки, уникай червоних.",
     gameStart: "Почати",
@@ -255,6 +259,10 @@ const I18N = {
     cvEduTitle: "College · software engineering",
     cvEduText: "Web technologies, databases, OOP, C#/.NET, Flutter. Coursework and labs are on GitHub.",
     cvSkills: "technologies",
+    offlineSave: "save offline",
+    offlineSaved: "Offline ready — the page opens without internet",
+    offlineSavedShort: "offline ✓",
+    offlineFailed: "Could not save offline:",
     gameLink: "mini game",
     gameHint: "Move with mouse or finger. Catch light dots, avoid the red ones.",
     gameStart: "Start",
@@ -1859,6 +1867,56 @@ function initNetlifyBadgeCleaner() {
   observer.observe(document.body, { childList: true, subtree: true });
 }
 
+/* --------------------------- 12.6 офлайн-кеш вручну ------------ */
+function initOfflineSave() {
+  const button = $("#offlineSave");
+  if (!button) return;
+  if (!("caches" in window)) {
+    button.hidden = true;
+    return;
+  }
+
+  const CORE = [
+    "./",
+    "./index.html",
+    "./offline.html",
+    "./styles.css",
+    "./script.js",
+    "./avatar.jpg",
+    "./manifest.webmanifest",
+    "./favicon.ico",
+    "./favicon-32.png",
+    "./icon-192.png",
+    "./icon-512.png",
+    "./apple-touch-icon.png",
+    "./og-image.png",
+    "./repos.json",
+  ];
+
+  const cacheName = "extremeowen-manual";
+
+  button.addEventListener("click", async () => {
+    button.disabled = true;
+
+    try {
+      const cache = await caches.open(cacheName);
+      const results = await Promise.allSettled(CORE.map((url) => cache.add(url)));
+      const saved = results.filter((r) => r.status === "fulfilled").length;
+
+      if (saved >= CORE.length - 2) {
+        showToast(t("offlineSaved"));
+        button.textContent = t("offlineSavedShort");
+      } else {
+        showToast(`${t("offlineFailed")} ${saved}/${CORE.length}`);
+      }
+    } catch (e) {
+      showToast(t("offlineFailed"));
+    } finally {
+      button.disabled = false;
+    }
+  });
+}
+
 /* ---------------------------------- 12.7 друк CV у PDF ---------- */
 function initCvPrint() {
   const button = $("#cvPrint");
@@ -2370,6 +2428,7 @@ initPalette();
 initContact();
 initShare();
 initCvPrint();
+initOfflineSave();
 initGame();
 initProjectsUi();
 initHelp();
@@ -2382,6 +2441,7 @@ initAnalytics();
 initNetlifyBadgeCleaner();
 initServiceWorker();
 applyLanguage(lang);
+
 
 
 
