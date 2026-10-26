@@ -1,0 +1,40 @@
+name: Deploy to Netlify
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # збираємо чисту папку: тільки те, що має бути на сайті
+      - name: Prepare dist
+        run: |
+          mkdir -p dist
+          rsync -a \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='.vscode' \
+            --exclude='scripts' \
+            --exclude='netlify' \
+            --exclude='node_modules' \
+            --exclude='avatar-original.jpg' \
+            --exclude='dist' \
+            ./ dist/
+          ls -la dist | head -30
+
+      - name: Deploy
+        run: |
+          npx --yes netlify-cli@latest deploy \
+            --prod \
+            --dir dist \
+            --site "${{ secrets.NETLIFY_SITE_ID }}" \
+            --auth "${{ secrets.NETLIFY_AUTH_TOKEN }}"
