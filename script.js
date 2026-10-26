@@ -1,4 +1,4 @@
-﻿/* ============================================================
+/* ============================================================
    extremeowen — логіка сторінки
    1. CONFIG (що змінювати)   2. Тексти UA/EN   3. Тема
    4. Мова   5. Посилання і копіювання   6. Аватар   7. Анімації
@@ -1865,12 +1865,6 @@ function initNetlifyBadgeCleaner() {
   observer.observe(document.body, { childList: true, subtree: true });
 }
 
-/* --------------------------- 12.5a маршрут #play --------------- */
-function openGameFromHash() {
-  if (location.hash !== "#play") return;
-  const link = $("#gameLink");
-  if (link) setTimeout(() => link.click(), 400);
-}
 
 /* --------------------------- 12.5b індикатор офлайну ----------- */
 function initNetBadge() {
@@ -2000,8 +1994,13 @@ function watchServiceWorkerUpdates(registration) {
     });
   });
 
+  // перезавантажуємо лише коли оновлення замінює вже активний воркер,
+  // а не при першій установці (інакше сторінка блимає й губить дії користувача)
+  const hadController = Boolean(navigator.serviceWorker.controller);
   let reloading = false;
+
   navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (!hadController) return;
     if (reloading) return;
     reloading = true;
     location.reload();
@@ -2429,6 +2428,14 @@ function initGame() {
   startBtn.addEventListener("click", start);
 
   draw();
+
+  // запуск гри з посилання ?play=1 (кнопка на 404-сторінці)
+  if (new URLSearchParams(location.search).has("play")) {
+    try {
+      history.replaceState(null, "", location.pathname);
+    } catch (e) {}
+    setTimeout(open, 250);
+  }
 }
 
 /* ---------------------------------- 12.9 конфеті -------------- */
@@ -2466,7 +2473,6 @@ initShare();
 initCvPrint();
 initOfflineWarm();
 initNetBadge();
-openGameFromHash();
 initGame();
 initProjectsUi();
 initHelp();
@@ -2479,6 +2485,13 @@ initAnalytics();
 initNetlifyBadgeCleaner();
 initServiceWorker();
 applyLanguage(lang);
+
+
+
+
+
+
+
 
 
 
