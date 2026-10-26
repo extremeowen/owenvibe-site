@@ -1,4 +1,4 @@
-﻿/* ============================================================
+/* ============================================================
    extremeowen — логіка сторінки
    1. CONFIG (що змінювати)   2. Тексти UA/EN   3. Тема
    4. Мова   5. Посилання і копіювання   6. Аватар   7. Анімації
@@ -979,7 +979,7 @@ async function loadRepoStats() {
 
   // 1) статичний файл, який оновлює GitHub Action — без запитів до API
   try {
-    const response = await fetch("data/repos.json", { cache: "no-store" });
+    const response = await fetch(`repos.json?v=${Math.floor(Date.now() / 3600000)}`, { cache: "no-store" });
     if (response.ok) {
       const json = await response.json();
       const data = json.repos || {};
@@ -2382,6 +2382,7 @@ initAnalytics();
 initNetlifyBadgeCleaner();
 initServiceWorker();
 applyLanguage(lang);
+
 
 
 

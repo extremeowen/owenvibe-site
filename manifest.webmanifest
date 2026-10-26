@@ -16,21 +16,21 @@
       "url": "./#projects",
       "screenshots": [
     {
-      "src": "screenshots/home.jpg",
+      "src": "shot-home.jpg",
       "sizes": "1080x1920",
       "type": "image/jpeg",
       "form_factor": "narrow",
       "label": "Головна — extremeowen"
     },
     {
-      "src": "screenshots/projects.jpg",
+      "src": "shot-projects.jpg",
       "sizes": "1080x1920",
       "type": "image/jpeg",
       "form_factor": "narrow",
       "label": "Проєкти з прев'ю та фільтрами"
     },
     {
-      "src": "screenshots/cv.jpg",
+      "src": "shot-cv.jpg",
       "sizes": "1080x1920",
       "type": "image/jpeg",
       "form_factor": "narrow",
@@ -45,21 +45,21 @@
       "url": "./#contact",
       "screenshots": [
     {
-      "src": "screenshots/home.jpg",
+      "src": "shot-home.jpg",
       "sizes": "1080x1920",
       "type": "image/jpeg",
       "form_factor": "narrow",
       "label": "Головна — extremeowen"
     },
     {
-      "src": "screenshots/projects.jpg",
+      "src": "shot-projects.jpg",
       "sizes": "1080x1920",
       "type": "image/jpeg",
       "form_factor": "narrow",
       "label": "Проєкти з прев'ю та фільтрами"
     },
     {
-      "src": "screenshots/cv.jpg",
+      "src": "shot-cv.jpg",
       "sizes": "1080x1920",
       "type": "image/jpeg",
       "form_factor": "narrow",
@@ -74,21 +74,21 @@
       "url": "./#cv",
       "screenshots": [
     {
-      "src": "screenshots/home.jpg",
+      "src": "shot-home.jpg",
       "sizes": "1080x1920",
       "type": "image/jpeg",
       "form_factor": "narrow",
       "label": "Головна — extremeowen"
     },
     {
-      "src": "screenshots/projects.jpg",
+      "src": "shot-projects.jpg",
       "sizes": "1080x1920",
       "type": "image/jpeg",
       "form_factor": "narrow",
       "label": "Проєкти з прев'ю та фільтрами"
     },
     {
-      "src": "screenshots/cv.jpg",
+      "src": "shot-cv.jpg",
       "sizes": "1080x1920",
       "type": "image/jpeg",
       "form_factor": "narrow",
@@ -100,21 +100,21 @@
   ],
   "screenshots": [
     {
-      "src": "screenshots/home.jpg",
+      "src": "shot-home.jpg",
       "sizes": "1080x1920",
       "type": "image/jpeg",
       "form_factor": "narrow",
       "label": "Головна — extremeowen"
     },
     {
-      "src": "screenshots/projects.jpg",
+      "src": "shot-projects.jpg",
       "sizes": "1080x1920",
       "type": "image/jpeg",
       "form_factor": "narrow",
       "label": "Проєкти з прев'ю та фільтрами"
     },
     {
-      "src": "screenshots/cv.jpg",
+      "src": "shot-cv.jpg",
       "sizes": "1080x1920",
       "type": "image/jpeg",
       "form_factor": "narrow",
@@ -142,5 +142,6 @@
     }
   ]
 }
+
 
 

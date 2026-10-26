@@ -1,4 +1,4 @@
-﻿# Заголовки для Netlify (працюють і при drag & drop, і при Git-деплої)
+# Заголовки для Netlify (працюють і при drag & drop, і при Git-деплої)
 
 /*
   X-Content-Type-Options: nosniff
@@ -34,6 +34,7 @@
   Cache-Control: public, max-age=604800
 
 # Дані статистики оновлюються щодня
-/data/repos.json
+/repos.json
   Cache-Control: public, max-age=3600
+
 

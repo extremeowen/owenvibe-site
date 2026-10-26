@@ -1,4 +1,4 @@
-﻿/* Збирає статистику репозиторіїв у статичний JSON, щоб сайт не смикав GitHub API
+/* Збирає статистику репозиторіїв у статичний JSON, щоб сайт не смикав GitHub API
    на кожному відкритті. Запускається GitHub Action раз на добу (або вручну).
 
    Список репозиторіїв береться прямо з script.js — там, де в CONFIG.projects
@@ -68,11 +68,12 @@ for (const { owner, repo } of unique) {
 const outDir = path.join(root, "data");
 await fs.mkdir(outDir, { recursive: true });
 await fs.writeFile(
-  path.join(outDir, "repos.json"),
+  path.join(root, "repos.json"),
   JSON.stringify({ generatedAt: new Date().toISOString(), repos }, null, 2) + "\n",
   "utf8"
 );
 
-console.log("written data/repos.json with", Object.keys(repos).length, "repos");
+console.log("written repos.json with", Object.keys(repos).length, "repos");
+
 
 
