@@ -149,6 +149,8 @@ const I18N = {
     cvEduTitle: "Коледж · розробка програмного забезпечення",
     cvEduText: "Веб-технології, бази даних, ООП, C#/.NET, Flutter. Курсові та лабораторні — на GitHub.",
     cvSkills: "технології",
+    offlineBadge: "офлайн-режим",
+    backOnline: "Знову онлайн",
     offlineSave: "зберегти офлайн",
     offlineSaved: "Офлайн готово — сторінка відкриється без інтернету",
     offlineSavedShort: "офлайн ✓",
@@ -259,6 +261,8 @@ const I18N = {
     cvEduTitle: "College · software engineering",
     cvEduText: "Web technologies, databases, OOP, C#/.NET, Flutter. Coursework and labs are on GitHub.",
     cvSkills: "technologies",
+    offlineBadge: "offline mode",
+    backOnline: "Back online",
     offlineSave: "save offline",
     offlineSaved: "Offline ready — the page opens without internet",
     offlineSavedShort: "offline ✓",
@@ -1867,6 +1871,30 @@ function initNetlifyBadgeCleaner() {
   observer.observe(document.body, { childList: true, subtree: true });
 }
 
+/* --------------------------- 12.5b індикатор офлайну ----------- */
+function initNetBadge() {
+  const badge = $("#netBadge");
+  if (!badge) return;
+
+  const render = () => {
+    const online = navigator.onLine !== false;
+    badge.hidden = online;
+
+    // без мережі банер встановлення недоречний
+    if (!online) {
+      const install = document.getElementById("installBanner");
+      if (install) install.hidden = true;
+    }
+  };
+
+  render();
+  window.addEventListener("online", () => {
+    render();
+    showToast(t("backOnline"));
+  });
+  window.addEventListener("offline", render);
+}
+
 /* --------------------------- 12.6 офлайн-кеш вручну ------------ */
 function initOfflineSave() {
   const button = $("#offlineSave");
@@ -2429,6 +2457,7 @@ initContact();
 initShare();
 initCvPrint();
 initOfflineSave();
+initNetBadge();
 initGame();
 initProjectsUi();
 initHelp();
@@ -2441,6 +2470,8 @@ initAnalytics();
 initNetlifyBadgeCleaner();
 initServiceWorker();
 applyLanguage(lang);
+
+
 
 
 

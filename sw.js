@@ -1,7 +1,7 @@
 ﻿/* Сервіс-воркер: сайт працює офлайн і відкривається миттєво з кешу.
    Коли щось зміниш у файлах — підніми версію нижче (v2, v3...),
    інакше браузер показуватиме стару копію. */
-const CACHE = "extremeowen-v20";
+const CACHE = "extremeowen-v21";
 const OFFLINE = "./offline.html";
 
 const ASSETS = [
@@ -131,5 +131,6 @@ self.addEventListener("fetch", (event) => {
     })
   );
 });
+
 
 
