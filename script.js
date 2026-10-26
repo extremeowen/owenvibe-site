@@ -1,4 +1,4 @@
-/* ============================================================
+﻿/* ============================================================
    extremeowen — логіка сторінки
    1. CONFIG (що змінювати)   2. Тексти UA/EN   3. Тема
    4. Мова   5. Посилання і копіювання   6. Аватар   7. Анімації
@@ -166,8 +166,8 @@ const I18N = {
     ctaContact: "написати",
     formName: "Ім'я",
     formNamePh: "Як до тебе звертатись",
-    formEmail: "Пошта або телеграм",
-    formEmailPh: "щоб відповісти",
+    formEmail: "пошта",
+    formEmailPh: "твоя@пошта.com",
     formMessage: "Повідомлення",
     formMessagePh: "Що треба зробити?",
     formSend: "Надіслати",
@@ -270,8 +270,8 @@ const I18N = {
     ctaContact: "say hi",
     formName: "Name",
     formNamePh: "How should I call you",
-    formEmail: "Email or Telegram",
-    formEmailPh: "so I can reply",
+    formEmail: "email",
+    formEmailPh: "you@example.com",
     formMessage: "Message",
     formMessagePh: "What do you need?",
     formSend: "Send",
@@ -2308,6 +2308,7 @@ initAnalytics();
 initNetlifyBadgeCleaner();
 initServiceWorker();
 applyLanguage(lang);
+
 
 
 
