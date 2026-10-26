@@ -69,7 +69,7 @@ const CONFIG = {
      GoatCounter: створи акаунт на goatcounter.com і впиши код, напр. "extremeowen". */
   analytics: {
     plausibleDomain: "",
-    goatcounter: "owen"
+    goatcounter: ""
   },
 
   /* Куди приходять повідомлення з форми «контакти». Обери один спосіб:
@@ -2382,6 +2382,7 @@ initAnalytics();
 initNetlifyBadgeCleaner();
 initServiceWorker();
 applyLanguage(lang);
+
 
 
 

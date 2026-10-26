@@ -4,7 +4,7 @@
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: geolocation=(), microphone=(), camera=()
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://plausible.io https://gc.zgo.at; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.goatcounter.com; font-src 'self'; connect-src 'self' https://api.github.com https://plausible.io https://gc.zgo.at https://*.goatcounter.com https://ntfy.sh; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://plausible.io https://gc.zgo.at; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.github.com https://plausible.io https://gc.zgo.at https://ntfy.sh; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
 
 # Сервіс-воркер і HTML не кешуємо — інакше оновлення не долетить
 /sw.js
@@ -36,5 +36,7 @@
 # Дані статистики оновлюються щодня
 /repos.json
   Cache-Control: public, max-age=3600
+
+
 
 
