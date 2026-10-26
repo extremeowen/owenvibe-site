@@ -1863,6 +1863,13 @@ function initNetlifyBadgeCleaner() {
   observer.observe(document.body, { childList: true, subtree: true });
 }
 
+/* --------------------------- 12.5a маршрут #play --------------- */
+function openGameFromHash() {
+  if (location.hash !== "#play") return;
+  const link = $("#gameLink");
+  if (link) setTimeout(() => link.click(), 400);
+}
+
 /* --------------------------- 12.5b індикатор офлайну ----------- */
 function initNetBadge() {
   const badge = $("#netBadge");
@@ -2155,6 +2162,13 @@ function initInstallPrompt() {
 }
 
 /* ---------------------------------- 12.8 міні-гра -------------- */
+/* легка вібрація на телефоні (desktop ігнорує) */
+function buzz(ms) {
+  try {
+    if (navigator.vibrate) navigator.vibrate(ms);
+  } catch (e) {}
+}
+
 function initGame() {
   const root = $("#game");
   const canvas = $("#gameCanvas");
@@ -2338,9 +2352,11 @@ function initGame() {
       if (caught) {
         if (item.bug) {
           lives -= 1;
+          buzz(70);
           if (lives <= 0) finish();
         } else {
           score += 1;
+          buzz(12);
         }
         return false;
       }
@@ -2448,6 +2464,7 @@ initShare();
 initCvPrint();
 initOfflineWarm();
 initNetBadge();
+openGameFromHash();
 initGame();
 initProjectsUi();
 initHelp();
@@ -2460,6 +2477,7 @@ initAnalytics();
 initNetlifyBadgeCleaner();
 initServiceWorker();
 applyLanguage(lang);
+
 
 
 
