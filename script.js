@@ -151,10 +151,6 @@ const I18N = {
     cvSkills: "технології",
     offlineBadge: "офлайн-режим",
     backOnline: "Знову онлайн",
-    offlineSave: "зберегти офлайн",
-    offlineSaved: "Офлайн готово — сторінка відкриється без інтернету",
-    offlineSavedShort: "офлайн ✓",
-    offlineFailed: "Не вдалось зберегти офлайн:",
     gameLink: "міні-гра",
     gameHint: "Рухай мишкою або пальцем. Лови світлі крапки, уникай червоних.",
     gameStart: "Почати",
@@ -263,10 +259,6 @@ const I18N = {
     cvSkills: "technologies",
     offlineBadge: "offline mode",
     backOnline: "Back online",
-    offlineSave: "save offline",
-    offlineSaved: "Offline ready — the page opens without internet",
-    offlineSavedShort: "offline ✓",
-    offlineFailed: "Could not save offline:",
     gameLink: "mini game",
     gameHint: "Move with mouse or finger. Catch light dots, avoid the red ones.",
     gameStart: "Start",
@@ -1895,14 +1887,13 @@ function initNetBadge() {
   window.addEventListener("offline", render);
 }
 
-/* --------------------------- 12.6 офлайн-кеш вручну ------------ */
-function initOfflineSave() {
-  const button = $("#offlineSave");
-  if (!button) return;
-  if (!("caches" in window)) {
-    button.hidden = true;
-    return;
-  }
+/* ---------------------- 12.6 тихий офлайн-кеш ------------------- */
+/* Ніяких кнопок: при кожному візиті сайт сам докладає в кеш те,
+   чого ще немає. Так офлайн працює навіть якщо сервіс-воркер
+   з якоїсь причини не встиг усе закешувати. */
+function initOfflineWarm() {
+  if (!("caches" in window)) return;
+  if (location.protocol !== "http:" && location.protocol !== "https:") return;
 
   const CORE = [
     "./",
@@ -1921,28 +1912,27 @@ function initOfflineSave() {
     "./repos.json",
   ];
 
-  const cacheName = "extremeowen-manual";
-
-  button.addEventListener("click", async () => {
-    button.disabled = true;
-
+  const warm = async () => {
     try {
-      const cache = await caches.open(cacheName);
-      const results = await Promise.allSettled(CORE.map((url) => cache.add(url)));
-      const saved = results.filter((r) => r.status === "fulfilled").length;
+      const cache = await caches.open("extremeowen-manual");
 
-      if (saved >= CORE.length - 2) {
-        showToast(t("offlineSaved"));
-        button.textContent = t("offlineSavedShort");
-      } else {
-        showToast(`${t("offlineFailed")} ${saved}/${CORE.length}`);
-      }
+      await Promise.allSettled(
+        CORE.map(async (url) => {
+          const hit = await cache.match(url);
+          if (hit) return null;
+          return cache.add(url).catch(() => null);
+        })
+      );
     } catch (e) {
-      showToast(t("offlineFailed"));
-    } finally {
-      button.disabled = false;
+      /* приватний режим або квота — просто без офлайну */
     }
-  });
+  };
+
+  if ("requestIdleCallback" in window) {
+    window.requestIdleCallback(warm, { timeout: 4000 });
+  } else {
+    setTimeout(warm, 2500);
+  }
 }
 
 /* ---------------------------------- 12.7 друк CV у PDF ---------- */
@@ -2456,7 +2446,7 @@ initPalette();
 initContact();
 initShare();
 initCvPrint();
-initOfflineSave();
+initOfflineWarm();
 initNetBadge();
 initGame();
 initProjectsUi();
@@ -2470,6 +2460,7 @@ initAnalytics();
 initNetlifyBadgeCleaner();
 initServiceWorker();
 applyLanguage(lang);
+
 
 
 
