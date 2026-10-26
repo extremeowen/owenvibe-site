@@ -1,4 +1,4 @@
-﻿/* ============================================================
+/* ============================================================
    extremeowen — логіка сторінки
    1. CONFIG (що змінювати)   2. Тексти UA/EN   3. Тема
    4. Мова   5. Посилання і копіювання   6. Аватар   7. Анімації
@@ -173,6 +173,8 @@ const I18N = {
     formSend: "Надіслати",
     formNote: "Форма ще не підключена, тому текст скопіюється — вставиш його в Telegram.",
     formEmpty: "Напиши хоч слово в повідомленні",
+    formEmailRequired: "Вкажи пошту — я маю куди відповісти",
+    formEmailInvalid: "Це не схоже на пошту. Приклад: name@gmail.com",
     formSent: "Надіслано — відпишусь незабаром",
     formError: "Не вдалось надіслати. Спробуй Telegram.",
     paletteOpen: "Швидкий перехід (Ctrl/⌘ + K)",
@@ -277,6 +279,8 @@ const I18N = {
     formSend: "Send",
     formNote: "The form is not connected yet — the text gets copied so you can paste it into Telegram.",
     formEmpty: "Write at least a few words",
+    formEmailRequired: "Add your email so I can reply",
+    formEmailInvalid: "That does not look like an email. Example: name@gmail.com",
     formSent: "Sent — I will reply soon",
     formError: "Could not send. Try Telegram instead.",
     paletteOpen: "Quick jump (Ctrl/⌘ + K)",
@@ -420,6 +424,12 @@ function applyLanguage(next) {
 
   const paletteInput = $("#paletteInput");
   if (paletteInput) paletteInput.placeholder = t("palettePlaceholder");
+
+  // плейсхолдери з data-i18n-placeholder
+  $$("[data-i18n-placeholder]").forEach((el) => {
+    const key = el.dataset.i18nPlaceholder;
+    if (key) el.placeholder = t(key);
+  });
 
   const paletteToggle = $("#paletteToggle");
   if (paletteToggle) {
@@ -1538,6 +1548,29 @@ function initContact() {
     if (!response.ok) throw new Error(String(response.status));
   };
 
+  const emailField = $("#cf-email");
+  const emailWrap = emailField ? emailField.closest(".field") : null;
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i;
+
+  const markEmail = (invalid) => {
+    if (!emailWrap) return;
+    emailWrap.classList.toggle("is-invalid", Boolean(invalid));
+    if (emailField) emailField.setAttribute("aria-invalid", String(Boolean(invalid)));
+  };
+
+  if (emailField) {
+    emailField.addEventListener("input", () => {
+      if (emailWrap && emailWrap.classList.contains("is-invalid")) {
+        if (EMAIL_RE.test(emailField.value.trim())) markEmail(false);
+      }
+    });
+
+    emailField.addEventListener("blur", () => {
+      const value = emailField.value.trim();
+      if (value && !EMAIL_RE.test(value)) markEmail(true);
+    });
+  }
+
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
@@ -1548,8 +1581,25 @@ function initContact() {
       return;
     }
 
+    const email = form.elements.email.value.trim();
+    if (!email) {
+      showToast(t("formEmailRequired"));
+      form.elements.email.focus();
+      markEmail(true);
+      return;
+    }
+
+    if (!EMAIL_RE.test(email)) {
+      showToast(t("formEmailInvalid"));
+      form.elements.email.focus();
+      markEmail(true);
+      return;
+    }
+
+    markEmail(false);
+
     const name = form.elements.name.value.trim();
-    const contact = form.elements.email.value.trim();
+    const contact = email;
 
     if (functionUrl || useNetlify || endpoint) {
       const button = form.querySelector(".submit");
@@ -2308,6 +2358,7 @@ initAnalytics();
 initNetlifyBadgeCleaner();
 initServiceWorker();
 applyLanguage(lang);
+
 
 
 
